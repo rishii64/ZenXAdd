@@ -1,0 +1,690 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZenSupportX - Full-Screen Privacy Mode</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #0f172a;
+            --primary-hover: #1e293b;
+            --secondary: #2563eb;
+            --secondary-hover: #1d4ed8;
+            --urgent: #e11d48;
+            --urgent-hover: #be123c;
+            --emerald: #00a651;
+            --emerald-hover: #008742;
+            --surface: #f8fafc;
+            --card-bg: #ffffff;
+            --border: #e2e8f0;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--surface);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+        }
+
+        /* Homepage Card */
+        .home-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 44px 40px;
+            max-width: 580px;
+            width: 100%;
+            box-shadow: 0 16px 36px -12px rgba(15, 23, 42, 0.08);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .home-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #2563eb, #e11d48, #00a651);
+        }
+
+        .badge-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: #eff6ff;
+            color: var(--secondary);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            font-weight: 600;
+            padding: 6px 14px;
+            border-radius: 30px;
+            margin-bottom: 20px;
+            border: 1px solid #dbeafe;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .badge-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--secondary);
+            animation: pulseDot 2s infinite;
+        }
+
+        @keyframes pulseDot {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.4; transform: scale(0.85); }
+        }
+
+        h1.title {
+            font-family: 'Hanken Grotesk', sans-serif;
+            font-size: 30px;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 10px;
+            letter-spacing: -0.02em;
+        }
+
+        p.subtitle {
+            font-size: 15px;
+            color: var(--text-muted);
+            margin-bottom: 28px;
+            line-height: 1.55;
+        }
+
+        /* Activate Button */
+        .btn-activate {
+            width: 100%;
+            background: var(--urgent);
+            color: #ffffff;
+            font-family: 'Inter', sans-serif;
+            font-size: 16px;
+            font-weight: 700;
+            padding: 16px 28px;
+            border-radius: 12px;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 8px 20px -4px rgba(225, 29, 72, 0.35);
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 28px;
+        }
+
+        .btn-activate:hover {
+            background: var(--urgent-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 12px 24px -4px rgba(225, 29, 72, 0.45);
+        }
+
+        .btn-activate:active {
+            transform: translateY(0);
+        }
+
+        /* Config Box for Emergency Exit Shortcut */
+        .config-box {
+            background: #f8fafc;
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 20px 22px;
+            text-align: left;
+        }
+
+        .config-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 12px;
+        }
+
+        .config-title {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--primary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .config-desc {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-bottom: 14px;
+            line-height: 1.45;
+        }
+
+        .shortcut-display-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: #ffffff;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 10px 14px;
+        }
+
+        .keys-group {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        kbd {
+            background: #f1f5f9;
+            color: var(--primary);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 13px;
+            font-weight: 600;
+            padding: 4px 10px;
+            border-radius: 6px;
+            border: 1px solid #cbd5e1;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+        }
+
+        .btn-rebind {
+            background: #eff6ff;
+            color: var(--secondary);
+            border: 1px solid #bfdbfe;
+            padding: 6px 14px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+
+        .btn-rebind:hover {
+            background: #dbeafe;
+        }
+
+        .btn-rebind.recording {
+            background: #fee2e2;
+            color: #b91c1c;
+            border-color: #fca5a5;
+            animation: recordPulse 1s infinite alternate;
+        }
+
+        @keyframes recordPulse {
+            from { opacity: 0.8; }
+            to { opacity: 1; transform: scale(1.02); }
+        }
+
+        .security-notice {
+            margin-top: 14px;
+            font-size: 12px;
+            color: #94a3b8;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        /* ========================================================
+           FULL-SCREEN PRIVACY SCREEN (Matches Reference Photos)
+           ======================================================== */
+        #privacy-screen-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            width: 100vw;
+            height: 100vh;
+            background: #ffffff;
+            color: #000000;
+            z-index: 2147483647; /* Maximum possible z-index */
+            user-select: none;
+            -webkit-user-select: none;
+            overflow: hidden;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 24px;
+            text-align: center;
+        }
+
+        #privacy-screen-overlay.active {
+            display: flex;
+        }
+
+        .privacy-box {
+            max-width: 680px;
+            width: 100%;
+            margin: 0 auto;
+        }
+
+        .privacy-box h1 {
+            color: #000000;
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            line-height: 1.25;
+            letter-spacing: -0.01em;
+        }
+
+        .privacy-box p.sub {
+            color: #555555;
+            font-size: 18px;
+            margin-bottom: 8px;
+        }
+
+        .privacy-box p.perks {
+            color: #555555;
+            font-size: 15px;
+            margin-bottom: 36px;
+        }
+
+        /* In-App Return Button (from reference photos: #00a651) */
+        .btn-in-app-return {
+            background: var(--emerald);
+            color: #ffffff;
+            font-size: 17px;
+            font-weight: 700;
+            padding: 16px 48px;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            display: inline-block;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 14px rgba(0, 166, 81, 0.3);
+        }
+
+        .btn-in-app-return:hover {
+            background: var(--emerald-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 18px rgba(0, 166, 81, 0.4);
+        }
+
+        .btn-in-app-return:active {
+            transform: translateY(0);
+        }
+
+        /* Discreet lock status in privacy mode */
+        .privacy-lock-badge {
+            position: fixed;
+            bottom: 14px;
+            right: 14px;
+            background: rgba(15, 23, 42, 0.7);
+            color: #94a3b8;
+            padding: 5px 12px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-family: 'JetBrains Mono', monospace;
+            backdrop-filter: blur(4px);
+            pointer-events: none;
+            opacity: 0.4;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Main Homepage -->
+    <main class="home-card">
+        <div class="badge-pill">
+            <span class="badge-dot"></span>
+            ZenSupportX System Security
+        </div>
+
+        <h1 class="title">Full-Screen Privacy Mode</h1>
+        <p class="subtitle">
+            Click the button below to engage full-screen privacy lockdown. While active, all navigation, hotkeys, system shortcuts, and window controls are blocked.
+        </p>
+
+        <!-- Primary Activation Button -->
+        <button id="btn-activate-privacy" class="btn-activate">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+            </svg>
+            Enter Full-Screen Privacy Mode
+        </button>
+
+        <!-- Configurable Emergency Exit Shortcut Section -->
+        <section class="config-box">
+            <div class="config-header">
+                <span class="config-title">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 15h.01M12 9v4m-8.485 5.485A9 9 0 1 1 18.485 3.515 9 9 0 0 1 3.515 18.485Z"/>
+                    </svg>
+                    Emergency Exit Combination
+                </span>
+            </div>
+            <p class="config-desc">
+                When privacy mode is active, the screen remains locked until system restart unless you click the in-app return button or press this combination:
+            </p>
+            <div class="shortcut-display-row">
+                <div class="keys-group" id="shortcut-keys-display">
+                    <kbd>Ctrl</kbd>
+                    <span>+</span>
+                    <kbd>Alt</kbd>
+                    <span>+</span>
+                    <kbd id="display-key">D</kbd>
+                </div>
+                <button id="btn-record-shortcut" class="btn-rebind" title="Click to customize emergency exit key combination">
+                    Change Combination
+                </button>
+            </div>
+            <div class="security-notice">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <line x1="12" y1="8" x2="12" y2="12"></line>
+                    <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                </svg>
+                <span>Blocks Esc, F11, Alt+F4, Ctrl+W, F5, Tab, and context menus while locked.</span>
+            </div>
+        </section>
+    </main>
+
+    <!-- Full-Screen Privacy Mode (Matches Reference Photos) -->
+    <div id="privacy-screen-overlay" aria-hidden="true">
+        <div class="privacy-box">
+            <h1>Choose Your Soccer Robes &amp; Kits</h1>
+            <p class="sub">Premium soccer jerseys &amp; robes for teams &amp; players.</p>
+            <p class="perks">Fast delivery • 30-day guarantee • Official kits</p>
+            
+            <!-- In-App Return Button -->
+            <button id="btn-in-app-return" class="btn-in-app-return">
+                Shop Now (Return &amp; Close)
+            </button>
+        </div>
+
+        <div class="privacy-lock-badge" id="lock-status-badge">
+            LOCKDOWN ACTIVE • EMERGENCY COMBO: <span id="overlay-combo-display">Ctrl + Alt + D</span>
+        </div>
+    </div>
+
+    <script>
+        // DOM Elements
+        const activateBtn = document.getElementById('btn-activate-privacy');
+        const overlay = document.getElementById('privacy-screen-overlay');
+        const returnBtn = document.getElementById('btn-in-app-return');
+        const recordBtn = document.getElementById('btn-record-shortcut');
+        const keysDisplay = document.getElementById('shortcut-keys-display');
+        const overlayComboDisplay = document.getElementById('overlay-combo-display');
+
+        // Configurable Emergency Shortcut State
+        let exitShortcut = {
+            ctrl: true,
+            alt: true,
+            shift: false,
+            key: 'd' // Default: Ctrl + Alt + D
+        };
+
+        // Load saved shortcut from localStorage if present
+        try {
+            const saved = localStorage.getItem('zen_privacy_emergency_shortcut');
+            if (saved) {
+                exitShortcut = JSON.parse(saved);
+            }
+        } catch (e) {}
+
+        let isLocked = false;
+        let isRecording = false;
+
+        // Render shortcut keys in UI
+        function updateShortcutUI() {
+            let html = '';
+            const comboText = [];
+
+            if (exitShortcut.ctrl) { html += '<kbd>Ctrl</kbd> <span>+</span> '; comboText.push('Ctrl'); }
+            if (exitShortcut.alt) { html += '<kbd>Alt</kbd> <span>+</span> '; comboText.push('Alt'); }
+            if (exitShortcut.shift) { html += '<kbd>Shift</kbd> <span>+</span> '; comboText.push('Shift'); }
+            html += `<kbd id="display-key">${exitShortcut.key.toUpperCase()}</kbd>`;
+            comboText.push(exitShortcut.key.toUpperCase());
+
+            keysDisplay.innerHTML = html;
+            overlayComboDisplay.textContent = comboText.join(' + ');
+        }
+
+        updateShortcutUI();
+
+        // Shortcut Recorder
+        recordBtn.addEventListener('click', function() {
+            if (isRecording) {
+                cancelRecording();
+                return;
+            }
+            isRecording = true;
+            recordBtn.textContent = 'Press combo on keyboard...';
+            recordBtn.classList.add('recording');
+        });
+
+        function cancelRecording() {
+            isRecording = false;
+            recordBtn.textContent = 'Change Combination';
+            recordBtn.classList.remove('recording');
+        }
+
+        window.addEventListener('keydown', function(e) {
+            if (!isRecording) return;
+            // Ignore lone modifier presses
+            if (['Control', 'Alt', 'Shift', 'Meta'].includes(e.key)) return;
+
+            e.preventDefault();
+            e.stopPropagation();
+
+            exitShortcut = {
+                ctrl: e.ctrlKey,
+                alt: e.altKey,
+                shift: e.shiftKey,
+                key: e.key.toLowerCase()
+            };
+
+            // Save to localStorage
+            try {
+                localStorage.setItem('zen_privacy_emergency_shortcut', JSON.stringify(exitShortcut));
+            } catch (err) {}
+
+            updateShortcutUI();
+            cancelRecording();
+        }, true);
+
+        // ========================================================
+        // PRIVACY LOCKDOWN ENGINE: DISABLE ALL KEYBOARD SHORTCUTS & COMBINATIONS
+        // ========================================================
+
+        function isEmergencyCombo(e) {
+            if (!exitShortcut || !exitShortcut.key) return false;
+
+            const ctrlMatches = exitShortcut.ctrl ? e.ctrlKey : !e.ctrlKey;
+            const altMatches = exitShortcut.alt ? e.altKey : !e.altKey;
+            const shiftMatches = exitShortcut.shift ? e.shiftKey : !e.shiftKey;
+
+            const keyMatches = (
+                (e.key && e.key.toLowerCase() === exitShortcut.key.toLowerCase()) ||
+                (e.code && e.code.toLowerCase() === ('key' + exitShortcut.key).toLowerCase())
+            );
+
+            return ctrlMatches && altMatches && shiftMatches && keyMatches;
+        }
+
+        function handleKeyLockdown(e) {
+            if (!isLocked) return;
+
+            // 1. Check for the only allowed emergency exit key combination
+            if (isEmergencyCombo(e)) {
+                e.preventDefault();
+                e.stopPropagation();
+                e.stopImmediatePropagation();
+                exitPrivacyMode();
+                return;
+            }
+
+            // 2. DISABLE ALL OTHER KEYBOARD SHORTCUTS, COMBINATIONS & KEYSTROKES
+            // Block 100% of all other keys, modifier combos, system hotkeys, and shortcuts
+            e.preventDefault();
+            e.stopPropagation();
+            e.stopImmediatePropagation();
+            return false;
+        }
+
+        // Block Right-Click Context Menu
+        function handleContextMenu(e) {
+            if (isLocked) {
+                e.preventDefault();
+                e.stopPropagation();
+                e.stopImmediatePropagation();
+                return false;
+            }
+        }
+
+        // Block Middle-Click & Special Mouse Clicks
+        function handleAuxClick(e) {
+            if (isLocked) {
+                e.preventDefault();
+                e.stopPropagation();
+                e.stopImmediatePropagation();
+                return false;
+            }
+        }
+
+        // Block Ctrl + Mouse Wheel Zoom
+        function handleWheel(e) {
+            if (isLocked && (e.ctrlKey || e.metaKey)) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+        }
+
+        // Block Text Selection & Dragging
+        function handleSelection(e) {
+            if (isLocked) {
+                e.preventDefault();
+                return false;
+            }
+        }
+
+        // Block Window Unload / Tab Close warning barrier
+        function handleBeforeUnload(e) {
+            if (isLocked) {
+                const message = 'Privacy mode is active. Screen is locked.';
+                e.preventDefault();
+                e.returnValue = message;
+                return message;
+            }
+        }
+
+        // Enforce Fullscreen retention
+        function handleFullscreenChange() {
+            if (isLocked && !document.fullscreenElement && !document.webkitFullscreenElement) {
+                // Re-assert fullscreen if lost
+                const docEl = document.documentElement;
+                const reqFs = docEl.requestFullscreen || docEl.webkitRequestFullscreen;
+                if (reqFs) {
+                    reqFs.call(docEl).catch(() => {});
+                }
+            }
+        }
+
+        // Activate Full-Screen Privacy Mode
+        function enterPrivacyMode() {
+            isLocked = true;
+            overlay.classList.add('active');
+            overlay.setAttribute('aria-hidden', 'false');
+
+            // 1. Request Full-Screen
+            const docEl = document.documentElement;
+            const reqFs = docEl.requestFullscreen || docEl.webkitRequestFullscreen || docEl.mozRequestFullScreen || docEl.msRequestFullscreen;
+            if (reqFs) {
+                reqFs.call(docEl).catch(() => {});
+            }
+
+            // 2. Chromium Keyboard Lock API (no args = locks ALL physical keyboard keys)
+            if (navigator.keyboard && typeof navigator.keyboard.lock === 'function') {
+                navigator.keyboard.lock().catch(() => {
+                    // Fallback to explicit list if empty lock fails
+                    navigator.keyboard.lock(['Escape', 'F11', 'Tab', 'AltLeft', 'AltRight', 'MetaLeft', 'MetaRight']).catch(() => {});
+                });
+            }
+
+            // 3. Attach Capture-Phase Keystroke Interceptors for all key phases
+            window.addEventListener('keydown', handleKeyLockdown, true);
+            window.addEventListener('keyup', handleKeyLockdown, true);
+            window.addEventListener('keypress', handleKeyLockdown, true);
+
+            // 4. Attach Mouse and Window Protections
+            window.addEventListener('contextmenu', handleContextMenu, true);
+            window.addEventListener('auxclick', handleAuxClick, true);
+            window.addEventListener('wheel', handleWheel, { passive: false, capture: true });
+            window.addEventListener('selectstart', handleSelection, true);
+            window.addEventListener('dragstart', handleSelection, true);
+            window.addEventListener('beforeunload', handleBeforeUnload);
+            document.addEventListener('fullscreenchange', handleFullscreenChange);
+
+            // History trap: prevents browser back button navigation
+            history.pushState(null, '', location.href);
+            window.addEventListener('popstate', onPopState);
+        }
+
+        function onPopState() {
+            if (isLocked) {
+                history.pushState(null, '', location.href);
+            }
+        }
+
+        // Exit Full-Screen Privacy Mode
+        function exitPrivacyMode() {
+            isLocked = false;
+            overlay.classList.remove('active');
+            overlay.setAttribute('aria-hidden', 'true');
+
+            // 1. Release Full-Screen
+            if (document.fullscreenElement || document.webkitFullscreenElement) {
+                const exitFs = document.exitFullscreen || document.webkitExitFullscreen || document.mozCancelFullScreen;
+                if (exitFs) {
+                    exitFs.call(document).catch(() => {});
+                }
+            }
+
+            // 2. Release Keyboard Lock
+            if (navigator.keyboard && typeof navigator.keyboard.unlock === 'function') {
+                navigator.keyboard.unlock();
+            }
+
+            // 3. Remove Trap Listeners
+            window.removeEventListener('keydown', handleKeyLockdown, true);
+            window.removeEventListener('keyup', handleKeyLockdown, true);
+            window.removeEventListener('keypress', handleKeyLockdown, true);
+            window.removeEventListener('contextmenu', handleContextMenu, true);
+            window.removeEventListener('auxclick', handleAuxClick, true);
+            window.removeEventListener('wheel', handleWheel, { capture: true });
+            window.removeEventListener('selectstart', handleSelection, true);
+            window.removeEventListener('dragstart', handleSelection, true);
+            window.removeEventListener('beforeunload', handleBeforeUnload);
+            document.removeEventListener('fullscreenchange', handleFullscreenChange);
+            window.removeEventListener('popstate', onPopState);
+        }
+
+        // Button 1 on Homepage: Opens Full-Screen Privacy Mode
+        activateBtn.addEventListener('click', function() {
+            enterPrivacyMode();
+        });
+
+        // In-App Return Button in Privacy Screen: Closes Privacy Mode & Returns to Homepage
+        returnBtn.addEventListener('click', function() {
+            exitPrivacyMode();
+        });
+    </script>
+</body>
+</html>
