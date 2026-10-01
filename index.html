@@ -3,247 +3,205 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ZenSupportX - Full-Screen Privacy Mode</title>
+    <title>Soccer Robes &amp; Kits - Shop Catalog</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --primary: #0f172a;
-            --primary-hover: #1e293b;
-            --secondary: #2563eb;
-            --secondary-hover: #1d4ed8;
-            --urgent: #e11d48;
-            --urgent-hover: #be123c;
-            --emerald: #00a651;
-            --emerald-hover: #008742;
-            --surface: #f8fafc;
-            --card-bg: #ffffff;
-            --border: #e2e8f0;
-            --text-main: #0f172a;
-            --text-muted: #64748b;
-        }
-
         * {
             box-sizing: border-box;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+        body {
+            font-family: 'Inter', Arial, sans-serif;
+            background: #f8f9fa;
+            color: #1a1a1a;
             margin: 0;
             padding: 0;
+            min-height: 100vh;
+        }
+        .header-bar {
+            position: sticky;
+            top: 0;
+            height: 64px;
+            background: #ffffff;
+            border-bottom: 1px solid #e5e7eb;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 32px;
+            z-index: 100;
+        }
+        .brand-logo {
+            font-weight: 700;
+            font-size: 18px;
+            color: #111827;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+        }
+        .brand-logo svg {
+            width: 24px;
+            height: 24px;
+            fill: #00a651;
+        }
+        .search-input {
+            width: 320px;
+            padding: 8px 16px;
+            border: 1px solid #d1d5db;
+            border-radius: 20px;
+            font-size: 14px;
+            outline: none;
+        }
+        .cart-icon {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: #f3f4f6;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+            color: #374151;
+            text-decoration: none;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 32px auto;
+            padding: 0 24px;
+        }
+        .hero-banner {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: white;
+            padding: 36px 40px;
+            border-radius: 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 32px;
+        }
+        .hero-title {
+            font-size: 28px;
+            font-weight: 700;
+            margin: 0 0 8px;
+        }
+        .hero-sub {
+            color: #94a3b8;
+            font-size: 15px;
+            margin: 0;
+        }
+        .filter-row {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 24px;
+            overflow-x: auto;
+            padding-bottom: 8px;
+        }
+        .filter-btn {
+            background: #ffffff;
+            border: 1px solid #e5e7eb;
+            padding: 8px 18px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: #4b5563;
+        }
+        .filter-btn.active, .filter-btn:hover {
+            background: #00a651;
+            color: white;
+            border-color: #00a651;
+        }
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 24px;
+        }
+        :root {
+            --emerald: #00a651;
+            --emerald-hover: #008742;
         }
 
-        body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: var(--surface);
-            color: var(--text-main);
-            min-height: 100vh;
+        .product-card {
+            background: #ffffff;
+            border: 1px solid #e5e7eb;
+            border-radius: 14px;
+            padding: 20px;
             display: flex;
             flex-direction: column;
+            justify-content: space-between;
+            transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.2s ease, border-color 0.2s ease;
+            cursor: pointer;
+            position: relative;
+        }
+        .product-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 28px rgba(0,0,0,0.08);
+            border-color: #cbd5e1;
+        }
+        .product-card:active {
+            transform: scale(0.985);
+        }
+        .product-image {
+            height: 160px;
+            background: #f1f5f9;
+            border-radius: 10px;
+            display: flex;
             align-items: center;
             justify-content: center;
-            padding: 24px;
+            font-size: 48px;
+            margin-bottom: 16px;
         }
-
-        /* Homepage Card */
-        .home-card {
-            background: var(--card-bg);
-            border: 1px solid var(--border);
-            border-radius: 20px;
-            padding: 44px 40px;
-            max-width: 580px;
-            width: 100%;
-            box-shadow: 0 16px 36px -12px rgba(15, 23, 42, 0.08);
-            text-align: center;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .home-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 4px;
-            background: linear-gradient(90deg, #2563eb, #e11d48, #00a651);
-        }
-
-        .badge-pill {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            background: #eff6ff;
-            color: var(--secondary);
-            font-family: 'JetBrains Mono', monospace;
+        .product-tag {
             font-size: 11px;
             font-weight: 600;
-            padding: 6px 14px;
-            border-radius: 30px;
-            margin-bottom: 20px;
-            border: 1px solid #dbeafe;
             text-transform: uppercase;
+            color: #00a651;
             letter-spacing: 0.5px;
+            margin-bottom: 4px;
         }
-
-        .badge-dot {
-            width: 6px;
-            height: 6px;
-            border-radius: 50%;
-            background: var(--secondary);
-            animation: pulseDot 2s infinite;
-        }
-
-        @keyframes pulseDot {
-            0%, 100% { opacity: 1; transform: scale(1); }
-            50% { opacity: 0.4; transform: scale(0.85); }
-        }
-
-        h1.title {
-            font-family: 'Hanken Grotesk', sans-serif;
-            font-size: 30px;
-            font-weight: 700;
-            color: var(--primary);
-            margin-bottom: 10px;
-            letter-spacing: -0.02em;
-        }
-
-        p.subtitle {
-            font-size: 15px;
-            color: var(--text-muted);
-            margin-bottom: 28px;
-            line-height: 1.55;
-        }
-
-        /* Activate Button */
-        .btn-activate {
-            width: 100%;
-            background: var(--urgent);
-            color: #ffffff;
-            font-family: 'Inter', sans-serif;
+        .product-name {
             font-size: 16px;
+            font-weight: 600;
+            color: #111827;
+            margin: 0 0 8px;
+        }
+        .product-desc {
+            font-size: 13px;
+            color: #6b7280;
+            margin: 0 0 16px;
+            line-height: 1.4;
+        }
+        .product-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-top: auto;
+        }
+        .price {
+            font-size: 18px;
             font-weight: 700;
-            padding: 16px 28px;
-            border-radius: 12px;
+            color: #111827;
+        }
+        .btn-add {
+            background: #00a651;
+            color: white;
             border: none;
-            cursor: pointer;
-            box-shadow: 0 8px 20px -4px rgba(225, 29, 72, 0.35);
-            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            margin-bottom: 28px;
-        }
-
-        .btn-activate:hover {
-            background: var(--urgent-hover);
-            transform: translateY(-2px);
-            box-shadow: 0 12px 24px -4px rgba(225, 29, 72, 0.45);
-        }
-
-        .btn-activate:active {
-            transform: translateY(0);
-        }
-
-        /* Config Box for Emergency Exit Shortcut */
-        .config-box {
-            background: #f8fafc;
-            border: 1px solid var(--border);
-            border-radius: 14px;
-            padding: 20px 22px;
-            text-align: left;
-        }
-
-        .config-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 12px;
-        }
-
-        .config-title {
-            font-size: 13px;
-            font-weight: 700;
-            color: var(--primary);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .config-desc {
-            font-size: 13px;
-            color: var(--text-muted);
-            margin-bottom: 14px;
-            line-height: 1.45;
-        }
-
-        .shortcut-display-row {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            background: #ffffff;
-            border: 1px solid var(--border);
-            border-radius: 10px;
-            padding: 10px 14px;
-        }
-
-        .keys-group {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        kbd {
-            background: #f1f5f9;
-            color: var(--primary);
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 13px;
-            font-weight: 600;
-            padding: 4px 10px;
+            padding: 8px 16px;
             border-radius: 6px;
-            border: 1px solid #cbd5e1;
-            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
-        }
-
-        .btn-rebind {
-            background: #eff6ff;
-            color: var(--secondary);
-            border: 1px solid #bfdbfe;
-            padding: 6px 14px;
-            border-radius: 8px;
-            font-size: 12px;
+            font-size: 13px;
             font-weight: 600;
             cursor: pointer;
-            transition: all 0.15s;
+            transition: background 0.2s;
         }
-
-        .btn-rebind:hover {
-            background: #dbeafe;
+        .btn-add:hover {
+            background: #008742;
         }
-
-        .btn-rebind.recording {
-            background: #fee2e2;
-            color: #b91c1c;
-            border-color: #fca5a5;
-            animation: recordPulse 1s infinite alternate;
-        }
-
-        @keyframes recordPulse {
-            from { opacity: 0.8; }
-            to { opacity: 1; transform: scale(1.02); }
-        }
-
-        .security-notice {
-            margin-top: 14px;
-            font-size: 12px;
-            color: #94a3b8;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
         /* ========================================================
-           FULL-SCREEN PRIVACY SCREEN (Matches Reference Photos)
+           FULL-SCREEN PRIVACY SCREEN (Matches index.html)
            ======================================================== */
         #privacy-screen-overlay {
             display: none;
@@ -297,7 +255,7 @@
 
         /* In-App Return Button (from reference photos: #00a651) */
         .btn-in-app-return {
-            background: var(--emerald);
+            background: var(--emerald, #00a651);
             color: #ffffff;
             font-size: 17px;
             font-weight: 700;
@@ -311,7 +269,7 @@
         }
 
         .btn-in-app-return:hover {
-            background: var(--emerald-hover);
+            background: var(--emerald-hover, #008742);
             transform: translateY(-2px);
             box-shadow: 0 6px 18px rgba(0, 166, 81, 0.4);
         }
@@ -338,65 +296,108 @@
     </style>
 </head>
 <body>
+    <header class="header-bar">
+        <a href="index.html" class="brand-logo">
+            <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-1-13h2v6h-2zm0 8h2v2h-2z"/></svg>
+            <span>Soccer Robes &amp; Kits</span>
+        </a>
+        <input type="text" class="search-input" placeholder="Search jerseys, robes, training sets..." />
+        <a href="#" class="cart-icon">
+            <span>🛒</span>
+            <span>Cart (0)</span>
+        </a>
+    </header>
 
-    <!-- Main Homepage -->
-    <main class="home-card">
-        <div class="badge-pill">
-            <span class="badge-dot"></span>
-            ZenSupportX System Security
+    <div class="container">
+        <div class="hero-banner">
+            <div>
+                <h1 class="hero-title">2026 Pro Season Kits &amp; Sideline Robes</h1>
+                <p class="hero-sub">Authentic moisture-wicking jerseys and thermal hooded sideline robes for elite athletes.</p>
+            </div>
+            <div>
+                <a href="index3.html" style="color: #94a3b8; font-size: 13px; text-decoration: none;">&larr; Back to Safe Page</a>
+            </div>
         </div>
 
-        <h1 class="title">Full-Screen Privacy Mode</h1>
-        <p class="subtitle">
-            Click the button below to engage full-screen privacy lockdown. While active, all navigation, hotkeys, system shortcuts, and window controls are blocked.
-        </p>
+        <div class="filter-row">
+            <button class="filter-btn active">All Items (12)</button>
+            <button class="filter-btn">Sideline Robes</button>
+            <button class="filter-btn">Club Home Kits</button>
+            <button class="filter-btn">Away Jerseys</button>
+            <button class="filter-btn">Training Wear</button>
+            <button class="filter-btn">Goalkeeper Sets</button>
+        </div>
 
-        <!-- Primary Activation Button -->
-        <button id="btn-activate-privacy" class="btn-activate">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
-                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
-                <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
-            </svg>
-            Enter Full-Screen Privacy Mode
-        </button>
-
-        <!-- Configurable Emergency Exit Shortcut Section -->
-        <section class="config-box">
-            <div class="config-header">
-                <span class="config-title">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M12 15h.01M12 9v4m-8.485 5.485A9 9 0 1 1 18.485 3.515 9 9 0 0 1 3.515 18.485Z"/>
-                    </svg>
-                    Emergency Exit Combination
-                </span>
-            </div>
-            <p class="config-desc">
-                When privacy mode is active, the screen remains locked until system restart unless you click the in-app return button or press this combination:
-            </p>
-            <div class="shortcut-display-row">
-                <div class="keys-group" id="shortcut-keys-display">
-                    <kbd>Ctrl</kbd>
-                    <span>+</span>
-                    <kbd>Alt</kbd>
-                    <span>+</span>
-                    <kbd id="display-key">D</kbd>
+        <div class="products-grid">
+            <div class="product-card">
+                <div class="product-image">🥋</div>
+                <div class="product-tag">Best Seller</div>
+                <h3 class="product-name">Waterproof Thermal Sideline Robe</h3>
+                <p class="product-desc">Heavyweight sherpa fleece interior with weatherproof storm-shell exterior.</p>
+                <div class="product-footer">
+                    <span class="price">$119.00</span>
+                    <button class="btn-add">Add to Cart</button>
                 </div>
-                <button id="btn-record-shortcut" class="btn-rebind" title="Click to customize emergency exit key combination">
-                    Change Combination
-                </button>
             </div>
-            <div class="security-notice">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <circle cx="12" cy="12" r="10"></circle>
-                    <line x1="12" y1="8" x2="12" y2="12"></line>
-                    <line x1="12" y1="16" x2="12.01" y2="16"></line>
-                </svg>
-                <span>Blocks Esc, F11, Alt+F4, Ctrl+W, F5, Tab, and context menus while locked.</span>
-            </div>
-        </section>
-    </main>
 
-    <!-- Full-Screen Privacy Mode (Matches Reference Photos) -->
+            <div class="product-card">
+                <div class="product-image">⚽</div>
+                <div class="product-tag">Official Kit</div>
+                <h3 class="product-name">2026 European Champion Match Jersey</h3>
+                <p class="product-desc">Aero-dry breathable engineered fabric with silicone club crest and heat-pressed details.</p>
+                <div class="product-footer">
+                    <span class="price">$89.99</span>
+                    <button class="btn-add">Add to Cart</button>
+                </div>
+            </div>
+
+            <div class="product-card">
+                <div class="product-image">🎽</div>
+                <div class="product-tag">New Release</div>
+                <h3 class="product-name">Elite Quarter-Zip Pre-Match Robe</h3>
+                <p class="product-desc">Lightweight windbreaker robe designed for warmups and bench protection.</p>
+                <div class="product-footer">
+                    <span class="price">$74.50</span>
+                    <button class="btn-add">Add to Cart</button>
+                </div>
+            </div>
+
+            <div class="product-card">
+                <div class="product-image">🧤</div>
+                <div class="product-tag">Goalkeeper</div>
+                <h3 class="product-name">Padded Goalkeeper Kit &amp; Under-Robe</h3>
+                <p class="product-desc">High-impact foam protection along elbows and ribs with pro grip gloves included.</p>
+                <div class="product-footer">
+                    <span class="price">$98.00</span>
+                    <button class="btn-add">Add to Cart</button>
+                </div>
+            </div>
+
+            <div class="product-card">
+                <div class="product-image">👟</div>
+                <div class="product-tag">Accessories</div>
+                <h3 class="product-name">Stadium Bench Travel Robe &amp; Scarf</h3>
+                <p class="product-desc">Full-length insulated stadium robe with reversible jacquard knit team scarf.</p>
+                <div class="product-footer">
+                    <span class="price">$129.99</span>
+                    <button class="btn-add">Add to Cart</button>
+                </div>
+            </div>
+
+            <div class="product-card">
+                <div class="product-image">🏆</div>
+                <div class="product-tag">Limited Edition</div>
+                <h3 class="product-name">Gold Edition Commemorative Kit</h3>
+                <p class="product-desc">Individually numbered tribute kit with presentation box and certificate.</p>
+                <div class="product-footer">
+                    <span class="price">$149.00</span>
+                    <button class="btn-add">Add to Cart</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Full-Screen Privacy Mode (Matches Reference Photos & index.html) -->
     <div id="privacy-screen-overlay" aria-hidden="true">
         <div class="privacy-box">
             <h1>Choose Your Soccer Robes &amp; Kits</h1>
@@ -416,14 +417,12 @@
 
     <script>
         // DOM Elements
-        const activateBtn = document.getElementById('btn-activate-privacy');
         const overlay = document.getElementById('privacy-screen-overlay');
         const returnBtn = document.getElementById('btn-in-app-return');
-        const recordBtn = document.getElementById('btn-record-shortcut');
-        const keysDisplay = document.getElementById('shortcut-keys-display');
         const overlayComboDisplay = document.getElementById('overlay-combo-display');
+        const adCards = document.querySelectorAll('.products-grid .product-card');
 
-        // Configurable Emergency Shortcut State
+        // Configurable Emergency Shortcut State (synchronized with index.html)
         let exitShortcut = {
             ctrl: true,
             alt: true,
@@ -440,68 +439,96 @@
         } catch (e) {}
 
         let isLocked = false;
-        let isRecording = false;
 
-        // Render shortcut keys in UI
+        // Update emergency combo text on overlay
         function updateShortcutUI() {
-            let html = '';
+            if (!overlayComboDisplay) return;
             const comboText = [];
-
-            if (exitShortcut.ctrl) { html += '<kbd>Ctrl</kbd> <span>+</span> '; comboText.push('Ctrl'); }
-            if (exitShortcut.alt) { html += '<kbd>Alt</kbd> <span>+</span> '; comboText.push('Alt'); }
-            if (exitShortcut.shift) { html += '<kbd>Shift</kbd> <span>+</span> '; comboText.push('Shift'); }
-            html += `<kbd id="display-key">${exitShortcut.key.toUpperCase()}</kbd>`;
+            if (exitShortcut.ctrl) comboText.push('Ctrl');
+            if (exitShortcut.alt) comboText.push('Alt');
+            if (exitShortcut.shift) comboText.push('Shift');
             comboText.push(exitShortcut.key.toUpperCase());
-
-            keysDisplay.innerHTML = html;
             overlayComboDisplay.textContent = comboText.join(' + ');
         }
-
         updateShortcutUI();
 
-        // Shortcut Recorder
-        recordBtn.addEventListener('click', function() {
-            if (isRecording) {
-                cancelRecording();
-                return;
-            }
-            isRecording = true;
-            recordBtn.textContent = 'Press combo on keyboard...';
-            recordBtn.classList.add('recording');
-        });
+        // ========================================================
+        // NOTIFICATION TONE GENERATOR (Web Audio API)
+        // ========================================================
+        let audioCtx = null;
 
-        function cancelRecording() {
-            isRecording = false;
-            recordBtn.textContent = 'Change Combination';
-            recordBtn.classList.remove('recording');
+        function playNotificationTone() {
+            try {
+                const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+                if (!AudioContextClass) return;
+
+                if (!audioCtx || audioCtx.state === 'closed') {
+                    audioCtx = new AudioContextClass();
+                }
+
+                if (audioCtx.state === 'suspended') {
+                    audioCtx.resume();
+                }
+
+                const now = audioCtx.currentTime;
+
+                // Tone 1: Primary chime tone (D5 / 587.33Hz rising to A5 / 880Hz)
+                const osc1 = audioCtx.createOscillator();
+                const gain1 = audioCtx.createGain();
+                osc1.type = 'sine';
+                osc1.frequency.setValueAtTime(587.33, now);
+                osc1.frequency.exponentialRampToValueAtTime(880, now + 0.12);
+
+                gain1.gain.setValueAtTime(0.001, now);
+                gain1.gain.linearRampToValueAtTime(0.28, now + 0.02);
+                gain1.gain.exponentialRampToValueAtTime(0.0001, now + 0.42);
+
+                osc1.connect(gain1);
+                gain1.connect(audioCtx.destination);
+
+                osc1.start(now);
+                osc1.stop(now + 0.42);
+
+                // Tone 2: Harmonic sparkle / shimmer (A5 / 880Hz rising to D6 / 1174.66Hz)
+                const osc2 = audioCtx.createOscillator();
+                const gain2 = audioCtx.createGain();
+                osc2.type = 'sine';
+                osc2.frequency.setValueAtTime(880, now + 0.08);
+                osc2.frequency.exponentialRampToValueAtTime(1174.66, now + 0.22);
+
+                gain2.gain.setValueAtTime(0.001, now);
+                gain2.gain.setValueAtTime(0.22, now + 0.08);
+                gain2.gain.exponentialRampToValueAtTime(0.0001, now + 0.55);
+
+                osc2.connect(gain2);
+                gain2.connect(audioCtx.destination);
+
+                osc2.start(now + 0.08);
+                osc2.stop(now + 0.55);
+
+                // Tone 3: Soft warm fundamental body (triangle wave)
+                const osc3 = audioCtx.createOscillator();
+                const gain3 = audioCtx.createGain();
+                osc3.type = 'triangle';
+                osc3.frequency.setValueAtTime(440, now);
+                osc3.frequency.exponentialRampToValueAtTime(587.33, now + 0.14);
+
+                gain3.gain.setValueAtTime(0.001, now);
+                gain3.gain.linearRampToValueAtTime(0.12, now + 0.02);
+                gain3.gain.exponentialRampToValueAtTime(0.0001, now + 0.38);
+
+                osc3.connect(gain3);
+                gain3.connect(audioCtx.destination);
+
+                osc3.start(now);
+                osc3.stop(now + 0.38);
+            } catch (err) {
+                console.warn('Notification audio playback failed:', err);
+            }
         }
 
-        window.addEventListener('keydown', function(e) {
-            if (!isRecording) return;
-            // Ignore lone modifier presses
-            if (['Control', 'Alt', 'Shift', 'Meta'].includes(e.key)) return;
-
-            e.preventDefault();
-            e.stopPropagation();
-
-            exitShortcut = {
-                ctrl: e.ctrlKey,
-                alt: e.altKey,
-                shift: e.shiftKey,
-                key: e.key.toLowerCase()
-            };
-
-            // Save to localStorage
-            try {
-                localStorage.setItem('zen_privacy_emergency_shortcut', JSON.stringify(exitShortcut));
-            } catch (err) {}
-
-            updateShortcutUI();
-            cancelRecording();
-        }, true);
-
         // ========================================================
-        // PRIVACY LOCKDOWN ENGINE: DISABLE ALL KEYBOARD SHORTCUTS & COMBINATIONS
+        // PRIVACY LOCKDOWN ENGINE (Matches index.html)
         // ========================================================
 
         function isEmergencyCombo(e) {
@@ -597,6 +624,12 @@
             }
         }
 
+        function onPopState() {
+            if (isLocked) {
+                history.pushState(null, '', location.href);
+            }
+        }
+
         // Activate Full-Screen Privacy Mode
         function enterPrivacyMode() {
             isLocked = true;
@@ -637,12 +670,6 @@
             window.addEventListener('popstate', onPopState);
         }
 
-        function onPopState() {
-            if (isLocked) {
-                history.pushState(null, '', location.href);
-            }
-        }
-
         // Exit Full-Screen Privacy Mode
         function exitPrivacyMode() {
             isLocked = false;
@@ -676,14 +703,35 @@
             window.removeEventListener('popstate', onPopState);
         }
 
-        // Button 1 on Homepage: Opens Full-Screen Privacy Mode
-        activateBtn.addEventListener('click', function() {
-            enterPrivacyMode();
+        // In-App Return Button: Closes Privacy Screen & Returns to Shop
+        returnBtn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            exitPrivacyMode();
         });
 
-        // In-App Return Button in Privacy Screen: Closes Privacy Mode & Returns to Homepage
-        returnBtn.addEventListener('click', function() {
-            exitPrivacyMode();
+        // ========================================================
+        // ATTACH CLICK LISTENERS TO ALL 6 ADS
+        // ========================================================
+        adCards.forEach((card, index) => {
+            card.setAttribute('role', 'button');
+            card.setAttribute('tabindex', '0');
+            card.setAttribute('title', 'Click to view product ad');
+
+            card.addEventListener('click', function(e) {
+                e.preventDefault();
+                playNotificationTone();
+                enterPrivacyMode();
+            });
+
+            // Keyboard accessibility for ads: Enter or Space
+            card.addEventListener('keydown', function(e) {
+                if (isLocked) return;
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    playNotificationTone();
+                    enterPrivacyMode();
+                }
+            });
         });
     </script>
 </body>
