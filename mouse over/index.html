@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Soccer Robes &amp; Kits</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 80px 20px 40px;
+            background: #ffffff;
+            color: #000000;
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        h1 {
+            color: #000000;
+            font-size: 32px;
+            margin: 0 0 16px;
+        }
+        p {
+            color: #555555;
+            font-size: 18px;
+            margin: 0 0 8px;
+        }
+        p.perks {
+            font-size: 15px;
+            margin-bottom: 32px;
+        }
+        .button {
+            background: #00a651;
+            color: white;
+            padding: 16px 48px;
+            border-radius: 8px;
+            text-decoration: none;
+            display: inline-block;
+            font-weight: bold;
+            font-size: 16px;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0, 166, 81, 0.25);
+            transition: background 0.15s;
+        }
+        .button:hover {
+            background: #008742;
+        }
+    </style>
+</head>
+<body>
+    <h1>Choose Your Soccer Robes &amp; Kits</h1>
+    <p>Premium soccer jerseys &amp; robes for teams &amp; players.</p>
+    <p class="perks">Fast delivery • 30-day guarantee • Official kits</p>
+    
+    <!-- Button to navigate to second page and close privacy screen -->
+    <button class="button" id="btn-navigate">Shop Now</button>
+
+    <script>
+        // System-wide lockdown: Fullscreen & Keyboard Lock
+        function lock() {
+            const docEl = document.documentElement;
+            const req = docEl.requestFullscreen || docEl.webkitRequestFullscreen;
+            if (req) req.call(docEl).catch(() => {});
+            if (navigator.keyboard && typeof navigator.keyboard.lock === 'function') {
+                navigator.keyboard.lock(['Escape', 'F11', 'Tab']).catch(() => {});
+            }
+        }
+
+        lock();
+        window.addEventListener('click', lock, { once: true });
+
+        // Load emergency key combination from localStorage (default: Ctrl + Alt + D)
+        let exitShortcut = { ctrl: true, alt: true, shift: false, key: 'd' };
+        try {
+            const saved = localStorage.getItem('zen_privacy_emergency_shortcut');
+            if (saved) exitShortcut = JSON.parse(saved);
+        } catch (err) {}
+
+        // Function to check emergency combination
+        function isEmergencyCombo(e) {
+            if (!exitShortcut || !exitShortcut.key) return false;
+            const ctrlMatch = exitShortcut.ctrl ? e.ctrlKey : !e.ctrlKey;
+            const altMatch = exitShortcut.alt ? e.altKey : !e.altKey;
+            const shiftMatch = exitShortcut.shift ? e.shiftKey : !e.shiftKey;
+            const keyMatch = (e.key && e.key.toLowerCase() === exitShortcut.key.toLowerCase()) ||
+                             (e.code && e.code.toLowerCase() === ('key' + exitShortcut.key).toLowerCase());
+            return ctrlMatch && altMatch && shiftMatch && keyMatch;
+        }
+
+        // Trap and disable ALL keyboard shortcuts, combinations, and keystrokes
+        function blockAllKeyCombinations(e) {
+            if (isEmergencyCombo(e)) {
+                e.preventDefault();
+                e.stopPropagation();
+                e.stopImmediatePropagation();
+                closeAndNavigate();
+                return;
+            }
+
+            // Disable 100% of all other keyboard shortcuts & keys
+            e.preventDefault();
+            e.stopPropagation();
+            e.stopImmediatePropagation();
+            return false;
+        }
+
+        window.addEventListener('keydown', blockAllKeyCombinations, true);
+        window.addEventListener('keyup', blockAllKeyCombinations, true);
+        window.addEventListener('keypress', blockAllKeyCombinations, true);
+
+        // Block context menu, selection, wheel zoom
+        window.addEventListener('contextmenu', e => { e.preventDefault(); e.stopPropagation(); }, true);
+        window.addEventListener('selectstart', e => e.preventDefault(), true);
+        window.addEventListener('dragstart', e => e.preventDefault(), true);
+        window.addEventListener('wheel', e => { if (e.ctrlKey || e.metaKey) { e.preventDefault(); e.stopPropagation(); } }, { passive: false, capture: true });
+
+        // Close privacy screen and navigate to second page
+        function closeAndNavigate() {
+            if (document.exitFullscreen) {
+                document.exitFullscreen().catch(() => {});
+            }
+            if (navigator.keyboard && typeof navigator.keyboard.unlock === 'function') {
+                navigator.keyboard.unlock();
+            }
+            window.location.href = '../second-page.html';
+        }
+
+        document.getElementById('btn-navigate').addEventListener('click', closeAndNavigate);
+    </script>
+</body>
+</html>

@@ -1,738 +1,853 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Soccer Robes &amp; Kits - Shop Catalog</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
-    <style>
-        * {
-            box-sizing: border-box;
-            user-select: none;
-            -webkit-user-select: none;
-        }
-        body {
-            font-family: 'Inter', Arial, sans-serif;
-            background: #f8f9fa;
-            color: #1a1a1a;
-            margin: 0;
-            padding: 0;
-            min-height: 100vh;
-        }
-        .header-bar {
-            position: sticky;
-            top: 0;
-            height: 64px;
-            background: #ffffff;
-            border-bottom: 1px solid #e5e7eb;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0 32px;
-            z-index: 100;
-        }
-        .brand-logo {
-            font-weight: 700;
-            font-size: 18px;
-            color: #111827;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            text-decoration: none;
-        }
-        .brand-logo svg {
-            width: 24px;
-            height: 24px;
-            fill: #00a651;
-        }
-        .search-input {
-            width: 320px;
-            padding: 8px 16px;
-            border: 1px solid #d1d5db;
-            border-radius: 20px;
-            font-size: 14px;
-            outline: none;
-        }
-        .cart-icon {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            background: #f3f4f6;
-            padding: 8px 16px;
-            border-radius: 20px;
-            font-size: 14px;
-            font-weight: 600;
-            color: #374151;
-            text-decoration: none;
-        }
-        .container {
-            max-width: 1200px;
-            margin: 32px auto;
-            padding: 0 24px;
-        }
-        .hero-banner {
-            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
-            color: white;
-            padding: 36px 40px;
-            border-radius: 16px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 32px;
-        }
-        .hero-title {
-            font-size: 28px;
-            font-weight: 700;
-            margin: 0 0 8px;
-        }
-        .hero-sub {
-            color: #94a3b8;
-            font-size: 15px;
-            margin: 0;
-        }
-        .filter-row {
-            display: flex;
-            gap: 12px;
-            margin-bottom: 24px;
-            overflow-x: auto;
-            padding-bottom: 8px;
-        }
-        .filter-btn {
-            background: #ffffff;
-            border: 1px solid #e5e7eb;
-            padding: 8px 18px;
-            border-radius: 20px;
-            font-size: 14px;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.2s;
-            color: #4b5563;
-        }
-        .filter-btn.active, .filter-btn:hover {
-            background: #00a651;
-            color: white;
-            border-color: #00a651;
-        }
-        .products-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-            gap: 24px;
-        }
-        :root {
-            --emerald: #00a651;
-            --emerald-hover: #008742;
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Guardio – Protect Everything You Do and Own Online</title>
+  <meta name="description"
+    content="Guardio protects your entire digital world by securing every account and interaction. Cancel anytime, hassle-free.">
 
-        .product-card {
-            background: #ffffff;
-            border: 1px solid #e5e7eb;
-            border-radius: 14px;
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.2s ease, border-color 0.2s ease;
-            cursor: pointer;
-            position: relative;
-        }
-        .product-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 12px 28px rgba(0,0,0,0.08);
-            border-color: #cbd5e1;
-        }
-        .product-card:active {
-            transform: scale(0.985);
-        }
-        .product-image {
-            height: 160px;
-            background: #f1f5f9;
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 48px;
-            margin-bottom: 16px;
-        }
-        .product-tag {
-            font-size: 11px;
-            font-weight: 600;
-            text-transform: uppercase;
-            color: #00a651;
-            letter-spacing: 0.5px;
-            margin-bottom: 4px;
-        }
-        .product-name {
-            font-size: 16px;
-            font-weight: 600;
-            color: #111827;
-            margin: 0 0 8px;
-        }
-        .product-desc {
-            font-size: 13px;
-            color: #6b7280;
-            margin: 0 0 16px;
-            line-height: 1.4;
-        }
-        .product-footer {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-top: auto;
-        }
-        .price {
-            font-size: 18px;
-            font-weight: 700;
-            color: #111827;
-        }
-        .btn-add {
-            background: #00a651;
-            color: white;
-            border: none;
-            padding: 8px 16px;
-            border-radius: 6px;
-            font-size: 13px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: background 0.2s;
-        }
-        .btn-add:hover {
-            background: #008742;
-        }
-        /* ========================================================
-           FULL-SCREEN PRIVACY SCREEN (Matches index.html)
-           ======================================================== */
-        #privacy-screen-overlay {
-            display: none;
-            position: fixed;
-            inset: 0;
-            width: 100vw;
-            height: 100vh;
-            background: #ffffff;
-            color: #000000;
-            z-index: 2147483647; /* Maximum possible z-index */
-            user-select: none;
-            -webkit-user-select: none;
-            overflow: hidden;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 40px 24px;
-            text-align: center;
-        }
+  <!-- Google Fonts Preconnect & Stylesheets -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@400;500;600;700&family=Source+Serif+4:ital,opsz,wght@0,8..60,600;0,8..60,700;1,8..60,400&family=Manrope:wght@300;400;500;600;700&display=swap"
+    rel="stylesheet">
 
-        #privacy-screen-overlay.active {
-            display: flex;
-        }
-
-        .privacy-box {
-            max-width: 680px;
-            width: 100%;
-            margin: 0 auto;
-        }
-
-        .privacy-box h1 {
-            color: #000000;
-            font-size: 32px;
-            font-weight: 700;
-            margin-bottom: 16px;
-            line-height: 1.25;
-            letter-spacing: -0.01em;
-        }
-
-        .privacy-box p.sub {
-            color: #555555;
-            font-size: 18px;
-            margin-bottom: 8px;
-        }
-
-        .privacy-box p.perks {
-            color: #555555;
-            font-size: 15px;
-            margin-bottom: 36px;
-        }
-
-        /* In-App Return Button (from reference photos: #00a651) */
-        .btn-in-app-return {
-            background: var(--emerald, #00a651);
-            color: #ffffff;
-            font-size: 17px;
-            font-weight: 700;
-            padding: 16px 48px;
-            border-radius: 8px;
-            border: none;
-            cursor: pointer;
-            display: inline-block;
-            transition: all 0.2s ease;
-            box-shadow: 0 4px 14px rgba(0, 166, 81, 0.3);
-        }
-
-        .btn-in-app-return:hover {
-            background: var(--emerald-hover, #008742);
-            transform: translateY(-2px);
-            box-shadow: 0 6px 18px rgba(0, 166, 81, 0.4);
-        }
-
-        .btn-in-app-return:active {
-            transform: translateY(0);
-        }
-
-        /* Discreet lock status in privacy mode */
-        .privacy-lock-badge {
-            position: fixed;
-            bottom: 14px;
-            right: 14px;
-            background: rgba(15, 23, 42, 0.7);
-            color: #94a3b8;
-            padding: 5px 12px;
-            border-radius: 6px;
-            font-size: 11px;
-            font-family: 'JetBrains Mono', monospace;
-            backdrop-filter: blur(4px);
-            pointer-events: none;
-            opacity: 0.4;
-        }
-    </style>
+  <!-- Stylesheet -->
+  <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
-    <header class="header-bar">
-        <a href="index.html" class="brand-logo">
-            <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-1-13h2v6h-2zm0 8h2v2h-2z"/></svg>
-            <span>Soccer Robes &amp; Kits</span>
+
+  <!-- =========================================
+       SECTION 1: HEADER
+  ========================================= -->
+  <header class="msk-header">
+    <div class="msk-header-inner">
+      <a href="#" class="msk-logo">
+        <span>Guardio</span>
+      </a>
+
+      <div class="msk-header-right">
+        <a href="tel:+18454488102" class="msk-phone" aria-label="Call +1 805 637 7948">
+          <span class="msk-phone-icon">&#9742;</span>
+          <span class="msk-phone-number">+1 805 637 7948</span>
         </a>
-        <input type="text" class="search-input" placeholder="Search jerseys, robes, training sets..." />
-        <a href="#" class="cart-icon">
-            <span>🛒</span>
-            <span>Cart (0)</span>
-        </a>
-    </header>
 
-    <div class="container">
-        <div class="hero-banner">
-            <div>
-                <h1 class="hero-title">2026 Pro Season Kits &amp; Sideline Robes</h1>
-                <p class="hero-sub">Authentic moisture-wicking jerseys and thermal hooded sideline robes for elite athletes.</p>
-            </div>
-            <div>
-                <a href="index3.html" style="color: #94a3b8; font-size: 13px; text-decoration: none;">&larr; Back to Safe Page</a>
-            </div>
+        <div class="msk-menu-wrapper">
+          <button class="msk-menu-btn" type="button" aria-label="Open Menu" aria-expanded="false">
+            <span>&#9776;</span>
+            <span>Menu</span>
+          </button>
+
+          <div class="msk-dropdown" id="mskDropdownMenu">
+            <a href="https://asoccerrobes.xyz/contact/">Contact Us</a>
+            <a href="https://asoccerrobes.xyz/faqs/">FAQ</a>
+          </div>
         </div>
+      </div>
+    </div>
+  </header>
 
-        <div class="filter-row">
-            <button class="filter-btn active">All Items (12)</button>
-            <button class="filter-btn">Sideline Robes</button>
-            <button class="filter-btn">Club Home Kits</button>
-            <button class="filter-btn">Away Jerseys</button>
-            <button class="filter-btn">Training Wear</button>
-            <button class="filter-btn">Goalkeeper Sets</button>
+  <!-- =========================================
+       SECTION 2: DIGI-HERO (PROTECT EVERYTHING)
+  ========================================= -->
+  <section class="digi-hero">
+    <div class="digi-hero-content">
+      <h1 class="digi-hero-title">
+        Protect everything<br>
+        you do and own online
+      </h1>
+      <p class="digi-hero-subtitle">
+        Guardio protects your entire digital world by securing every account and interaction
+      </p>
+      <a href="#" class="digi-hero-btn">Start for Free</a>
+
+      <div class="digi-trust">
+        <span>Excellent</span>
+        <div class="digi-stars">
+          <span class="digi-star">&#9733;</span>
+          <span class="digi-star">&#9733;</span>
+          <span class="digi-star">&#9733;</span>
+          <span class="digi-star">&#9733;</span>
+          <span class="digi-star">&#9733;</span>
         </div>
-
-        <div class="products-grid">
-            <div class="product-card">
-                <div class="product-image">🥋</div>
-                <div class="product-tag">Best Seller</div>
-                <h3 class="product-name">Waterproof Thermal Sideline Robe</h3>
-                <p class="product-desc">Heavyweight sherpa fleece interior with weatherproof storm-shell exterior.</p>
-                <div class="product-footer">
-                    <span class="price">$119.00</span>
-                    <button class="btn-add">Add to Cart</button>
-                </div>
-            </div>
-
-            <div class="product-card">
-                <div class="product-image">⚽</div>
-                <div class="product-tag">Official Kit</div>
-                <h3 class="product-name">2026 European Champion Match Jersey</h3>
-                <p class="product-desc">Aero-dry breathable engineered fabric with silicone club crest and heat-pressed details.</p>
-                <div class="product-footer">
-                    <span class="price">$89.99</span>
-                    <button class="btn-add">Add to Cart</button>
-                </div>
-            </div>
-
-            <div class="product-card">
-                <div class="product-image">🎽</div>
-                <div class="product-tag">New Release</div>
-                <h3 class="product-name">Elite Quarter-Zip Pre-Match Robe</h3>
-                <p class="product-desc">Lightweight windbreaker robe designed for warmups and bench protection.</p>
-                <div class="product-footer">
-                    <span class="price">$74.50</span>
-                    <button class="btn-add">Add to Cart</button>
-                </div>
-            </div>
-
-            <div class="product-card">
-                <div class="product-image">🧤</div>
-                <div class="product-tag">Goalkeeper</div>
-                <h3 class="product-name">Padded Goalkeeper Kit &amp; Under-Robe</h3>
-                <p class="product-desc">High-impact foam protection along elbows and ribs with pro grip gloves included.</p>
-                <div class="product-footer">
-                    <span class="price">$98.00</span>
-                    <button class="btn-add">Add to Cart</button>
-                </div>
-            </div>
-
-            <div class="product-card">
-                <div class="product-image">👟</div>
-                <div class="product-tag">Accessories</div>
-                <h3 class="product-name">Stadium Bench Travel Robe &amp; Scarf</h3>
-                <p class="product-desc">Full-length insulated stadium robe with reversible jacquard knit team scarf.</p>
-                <div class="product-footer">
-                    <span class="price">$129.99</span>
-                    <button class="btn-add">Add to Cart</button>
-                </div>
-            </div>
-
-            <div class="product-card">
-                <div class="product-image">🏆</div>
-                <div class="product-tag">Limited Edition</div>
-                <h3 class="product-name">Gold Edition Commemorative Kit</h3>
-                <p class="product-desc">Individually numbered tribute kit with presentation box and certificate.</p>
-                <div class="product-footer">
-                    <span class="price">$149.00</span>
-                    <button class="btn-add">Add to Cart</button>
-                </div>
-            </div>
-        </div>
+        <a href="#" class="digi-trust-link">14,226 reviews on</a>
+        <span class="digi-trust-logo">&#9733; Trustpilot</span>
+      </div>
     </div>
 
-    <!-- Full-Screen Privacy Mode (Matches Reference Photos & index.html) -->
-    <div id="privacy-screen-overlay" aria-hidden="true">
-        <div class="privacy-box">
-            <h1>Choose Your Soccer Robes &amp; Kits</h1>
-            <p class="sub">Premium soccer jerseys &amp; robes for teams &amp; players.</p>
-            <p class="perks">Fast delivery • 30-day guarantee • Official kits</p>
-            
-            <!-- In-App Return Button -->
-            <button id="btn-in-app-return" class="btn-in-app-return">
-                Shop Now (Return &amp; Close)
-            </button>
-        </div>
-
-        <div class="privacy-lock-badge" id="lock-status-badge">
-            LOCKDOWN ACTIVE • EMERGENCY COMBO: <span id="overlay-combo-display">Ctrl + Alt + D</span>
-        </div>
+    <!-- Floating Icons & Cards -->
+    <div class="digi-floating-icon digi-chrome">
+      <img src="images/icon-chrome.jpg"
+        onerror="this.src='https://asoccerrobes.xyz/wp-content/uploads/2026/09/icon-chrome.jpg'" alt="Google Chrome"
+        width="148" height="148">
     </div>
 
-    <script>
-        // DOM Elements
-        const overlay = document.getElementById('privacy-screen-overlay');
-        const returnBtn = document.getElementById('btn-in-app-return');
-        const overlayComboDisplay = document.getElementById('overlay-combo-display');
-        const adCards = document.querySelectorAll('.products-grid .product-card');
+    <div class="digi-floating-icon digi-gmail">
+      <img src="images/icon-email.png"
+        onerror="this.src='https://asoccerrobes.xyz/wp-content/uploads/2026/09/icon-email.png'" alt="Email" width="148"
+        height="148">
+    </div>
 
-        // Configurable Emergency Shortcut State (synchronized with index.html)
-        let exitShortcut = {
-            ctrl: true,
-            alt: true,
-            shift: false,
-            key: 'd' // Default: Ctrl + Alt + D
-        };
+    <div class="digi-floating-icon digi-payment">
+      <span style="color:#1a237e;">VISA</span>
+      <span style="color:#e31837;">●●</span>
+      <span style="color:#1877f2;">P</span>
+      <span style="color:#2374bd;">◉</span>
+    </div>
 
-        // Load saved shortcut from localStorage if present
-        try {
-            const saved = localStorage.getItem('zen_privacy_emergency_shortcut');
-            if (saved) {
-                exitShortcut = JSON.parse(saved);
-            }
-        } catch (e) {}
+    <div class="digi-email-card">
+      <div class="digi-card-title">Your Emails</div>
+      <div class="digi-email-row">
+        <span class="digi-status"></span>
+        jonathansmith@gmail.com
+      </div>
+      <div class="digi-email-row">
+        <span class="digi-status"></span>
+        smith.jon@gmail.com
+      </div>
+      <div class="digi-email-row">
+        <span class="digi-status red"></span>
+        jonathan.s@yahoo.com
+      </div>
+    </div>
 
-        let isLocked = false;
+    <div class="digi-profile">
+      <div class="digi-profile-inner">
+        <img src="images/profile.jpg" onerror="this.src='https://i.pravatar.cc/200?img=12'" alt="Profile" width="200"
+          height="200">
+      </div>
+      <div class="digi-facebook">f</div>
+    </div>
 
-        // Update emergency combo text on overlay
-        function updateShortcutUI() {
-            if (!overlayComboDisplay) return;
-            const comboText = [];
-            if (exitShortcut.ctrl) comboText.push('Ctrl');
-            if (exitShortcut.alt) comboText.push('Alt');
-            if (exitShortcut.shift) comboText.push('Shift');
-            comboText.push(exitShortcut.key.toUpperCase());
-            overlayComboDisplay.textContent = comboText.join(' + ');
-        }
-        updateShortcutUI();
+    <div class="digi-family-card">
+      <div class="digi-family-title">Your Family</div>
+      <div class="digi-family-members">
+        <div class="digi-person">
+          <img src="images/benjamin.jpg" onerror="this.src='https://i.pravatar.cc/100?img=11'" alt="Benjamin"
+            width="100" height="100">
+          Benjamin
+        </div>
+        <div class="digi-person">
+          <img src="images/sara.jpg" onerror="this.src='https://i.pravatar.cc/100?img=47'" alt="Sara" width="100"
+            height="100">
+          Sara
+        </div>
+        <div class="digi-person">
+          <img src="images/jesse.jpg" onerror="this.src='https://i.pravatar.cc/100?img=32'" alt="Jesse" width="100"
+            height="100">
+          Jesse
+        </div>
+      </div>
+    </div>
+  </section>
 
-        // ========================================================
-        // NOTIFICATION TONE GENERATOR (Web Audio API)
-        // ========================================================
-        let audioCtx = null;
+  <!-- =========================================
+       SECTION 3: MSK-HERO (ANTIVIRUS PROTECTION)
+  ========================================= -->
+  <section class="msk-hero">
+    <div class="msk-hero-container">
+      <div class="msk-badge">
+        <span class="msk-badge-dot"></span>
+        Our support team is online now
+      </div>
 
-        function playNotificationTone() {
-            try {
-                const AudioContextClass = window.AudioContext || window.webkitAudioContext;
-                if (!AudioContextClass) return;
+      <h1>
+        Stay Safe with
+        <span class="msk-highlight">Antivirus Protection</span>
+        <br>
+        <span class="msk-highlight">Cancel Anytime, Hassle-Free</span>
+      </h1>
 
-                if (!audioCtx || audioCtx.state === 'closed') {
-                    audioCtx = new AudioContextClass();
-                }
+      <p class="msk-subtext">
+        Simple, step-by-step help to stop automatic renewals and claim
+        your refund. Choose your antivirus provider below to view the
+        full instructions.
+      </p>
 
-                if (audioCtx.state === 'suspended') {
-                    audioCtx.resume();
-                }
+      <div class="msk-select-label">CHOOSE YOUR ANTIVIRUS BRAND</div>
 
-                const now = audioCtx.currentTime;
+      <div class="msk-provider-grid">
+        <div class="msk-provider-card">
+          <div class="msk-provider-name">Geek Squad</div>
+          <div class="msk-provider-desc">
+            Cancellation steps &middot; Refund request &middot; Common questions
+          </div>
+        </div>
 
-                // Tone 1: Primary chime tone (D5 / 587.33Hz rising to A5 / 880Hz)
-                const osc1 = audioCtx.createOscillator();
-                const gain1 = audioCtx.createGain();
-                osc1.type = 'sine';
-                osc1.frequency.setValueAtTime(587.33, now);
-                osc1.frequency.exponentialRampToValueAtTime(880, now + 0.12);
+        <div class="msk-provider-card">
+          <div class="msk-provider-name">Norton</div>
+          <div class="msk-provider-desc">
+            Cancellation steps &middot; Refund request &middot; Common questions
+          </div>
+        </div>
 
-                gain1.gain.setValueAtTime(0.001, now);
-                gain1.gain.linearRampToValueAtTime(0.28, now + 0.02);
-                gain1.gain.exponentialRampToValueAtTime(0.0001, now + 0.42);
+        <div class="msk-provider-card">
+          <div class="msk-provider-name">Bitdefender</div>
+          <div class="msk-provider-desc">
+            Cancellation steps &middot; Refund request &middot; Common questions
+          </div>
+        </div>
 
-                osc1.connect(gain1);
-                gain1.connect(audioCtx.destination);
+        <div class="msk-provider-card">
+          <div class="msk-provider-name">Guardio</div>
+          <div class="msk-provider-desc">
+            Cancellation steps &middot; Refund request &middot; Common questions
+          </div>
+        </div>
+      </div>
 
-                osc1.start(now);
-                osc1.stop(now + 0.42);
+      <div class="msk-desk-box">
+        <div class="msk-desk-label">NEED HELP? CONTACT OUR SUPPORT TEAM</div>
+        <div class="msk-phone">+1 805 637 7948</div>
+        <div class="msk-buttons">
+          <a href="tel:+18454488102" class="msk-btn msk-call">
+            &#128222; Call Us
+          </a>
+          <a href="mailto:support@martshopkh.store" class="msk-btn msk-email">
+            &#128172; Send Email
+          </a>
+        </div>
+        <div class="msk-availability">
+          &#128336; Open 24/7 &middot; Quick response, usually under 2 minutes
+        </div>
+      </div>
+    </div>
+  </section>
 
-                // Tone 2: Harmonic sparkle / shimmer (A5 / 880Hz rising to D6 / 1174.66Hz)
-                const osc2 = audioCtx.createOscillator();
-                const gain2 = audioCtx.createGain();
-                osc2.type = 'sine';
-                osc2.frequency.setValueAtTime(880, now + 0.08);
-                osc2.frequency.exponentialRampToValueAtTime(1174.66, now + 0.22);
+  <!-- =========================================
+       SECTION 4: FEATURES CAROUSEL
+  ========================================= -->
+  <section class="sec-features">
+    <div class="wrap">
+      <div class="heading">
+        <h2>Everything covered, start to finish</h2>
+        <p>From setup to refunds, here's what's included with every plan.</p>
+      </div>
 
-                gain2.gain.setValueAtTime(0.001, now);
-                gain2.gain.setValueAtTime(0.22, now + 0.08);
-                gain2.gain.exponentialRampToValueAtTime(0.0001, now + 0.55);
+      <div class="slider" id="slider">
+        <div class="track" id="track">
+          <!-- Slide 1 -->
+          <div class="slide">
+            <div class="card">
+              <div class="icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M12 2v20M2 12h20" />
+                </svg>
+              </div>
+              <div>
+                <h3>Installation &amp; Setup</h3>
+                <p>We handle the setup for you &mdash; download, activation, and configuration, done within minutes of
+                  purchase. No technical steps left for you to figure out.</p>
+              </div>
+            </div>
+          </div>
 
-                osc2.connect(gain2);
-                gain2.connect(audioCtx.destination);
+          <!-- Slide 2 -->
+          <div class="slide">
+            <div class="card">
+              <div class="icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" />
+                  <path d="M3 3v5h5" />
+                </svg>
+              </div>
+              <div>
+                <h3>Cancellation &amp; Instant Refund</h3>
+                <p>Change your mind anytime. Cancel in one click and get your refund processed instantly &mdash; no
+                  waiting, no forms, no back-and-forth.</p>
+              </div>
+            </div>
+          </div>
 
-                osc2.start(now + 0.08);
-                osc2.stop(now + 0.55);
+          <!-- Slide 3 -->
+          <div class="slide">
+            <div class="card">
+              <div class="icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="3" y="11" width="18" height="10" rx="2" />
+                  <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+                </svg>
+              </div>
+              <div>
+                <h3>Login &amp; Access</h3>
+                <p>Secure login credentials delivered right after purchase, with full access to your account and support
+                  if you ever get locked out.</p>
+              </div>
+            </div>
+          </div>
 
-                // Tone 3: Soft warm fundamental body (triangle wave)
-                const osc3 = audioCtx.createOscillator();
-                const gain3 = audioCtx.createGain();
-                osc3.type = 'triangle';
-                osc3.frequency.setValueAtTime(440, now);
-                osc3.frequency.exponentialRampToValueAtTime(587.33, now + 0.14);
+          <!-- Slide 4 -->
+          <div class="slide">
+            <div class="card">
+              <div class="icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M12 2 4 5v6c0 5 3.5 9 8 11 4.5-2 8-6 8-11V5z" />
+                </svg>
+              </div>
+              <div>
+                <h3>Browser Protection</h3>
+                <p>Built-in browser-level protection blocks trackers, malicious ads, and unsafe sites while you browse
+                  &mdash; active automatically, no setup required.</p>
+              </div>
+            </div>
+          </div>
 
-                gain3.gain.setValueAtTime(0.001, now);
-                gain3.gain.linearRampToValueAtTime(0.12, now + 0.02);
-                gain3.gain.exponentialRampToValueAtTime(0.0001, now + 0.38);
+          <!-- Slide 5 -->
+          <div class="slide">
+            <div class="card">
+              <div class="icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M12 2l2.5 6.5L21 9l-5 4.5 1.5 7L12 17l-5.5 3.5L8 13.5 3 9l6.5-.5z" />
+                </svg>
+              </div>
+              <div>
+                <h3>VIP Plans</h3>
+                <p>Priority support, extended limits, and exclusive perks for members who want more from their plan
+                  &mdash; upgrade anytime, no long-term lock-in.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
 
-                osc3.connect(gain3);
-                gain3.connect(audioCtx.destination);
+      <div class="dots" id="dots"></div>
 
-                osc3.start(now);
-                osc3.stop(now + 0.38);
-            } catch (err) {
-                console.warn('Notification audio playback failed:', err);
-            }
-        }
+      <div class="arrows">
+        <button class="arrow-btn" id="prevBtn" aria-label="Previous">&lsaquo;</button>
+        <button class="arrow-btn" id="nextBtn" aria-label="Next">&rsaquo;</button>
+      </div>
+    </div>
+  </section>
 
-        // ========================================================
-        // PRIVACY LOCKDOWN ENGINE (Matches index.html)
-        // ========================================================
+  <!-- =========================================
+       SECTION 5: CALL CTA BANNER
+  ========================================= -->
+  <section class="sec-cta">
+    <div class="cta">
+      <div class="cta-text">
+        <div class="eyebrow">
+          <span class="pulse-dot"></span>
+          Support online now
+        </div>
+        <h3>Talk to someone in the next 60 seconds</h3>
+        <p>No tickets, no queues &mdash; call our care line and get your issue sorted while you're still on the page.
+        </p>
+      </div>
 
-        function isEmergencyCombo(e) {
-            if (!exitShortcut || !exitShortcut.key) return false;
+      <a href="tel:+18454488102" class="call-btn">
+        <span class="call-icon">
+          <svg viewBox="0 0 24 24">
+            <path
+              d="M6.62 10.79a15.05 15.05 0 0 0 6.59 6.59l2.2-2.2a1 1 0 0 1 1.01-.24 11.36 11.36 0 0 0 3.57.57 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1 11.36 11.36 0 0 0 .57 3.57 1 1 0 0 1-.25 1.01z" />
+          </svg>
+        </span>
+        <span class="label">
+          <small>Call now</small>
+          +1 805 637 7948
+        </span>
+      </a>
+    </div>
+  </section>
 
-            const ctrlMatches = exitShortcut.ctrl ? e.ctrlKey : !e.ctrlKey;
-            const altMatches = exitShortcut.alt ? e.altKey : !e.altKey;
-            const shiftMatches = exitShortcut.shift ? e.shiftKey : !e.shiftKey;
+  <!-- =========================================
+       SECTION 6: CONTACT OPTIONS
+  ========================================= -->
+  <section class="sec-contact">
+    <div class="wrap">
+      <h2>Other ways to reach us</h2>
+      <div class="grid">
+        <a href="tel:+18454488102" class="option">
+          <div class="badge">
+            <svg viewBox="0 0 24 24">
+              <path
+                d="M12 2a9 9 0 0 0-9 9v5a3 3 0 0 0 3 3h1v-8H5v-1a7 7 0 0 1 14 0v1h-2v8h1a3 3 0 0 0 3-3v-5a9 9 0 0 0-9-9z" />
+            </svg>
+          </div>
+          <div class="content">
+            <h3>Phone Guide</h3>
+            <p class="primary">+1 805 637 7948</p>
+            <p class="tag">Fastest way to get help</p>
+          </div>
+        </a>
 
-            const keyMatches = (
-                (e.key && e.key.toLowerCase() === exitShortcut.key.toLowerCase()) ||
-                (e.code && e.code.toLowerCase() === ('key' + exitShortcut.key).toLowerCase())
-            );
+        <a href="mailto:support@martshopkh.store" class="option">
+          <div class="badge">
+            <svg viewBox="0 0 24 24">
+              <path
+                d="M4 4h16a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2zm0 2v.01L12 13l8-6.99V6H4zm16 12V8.24l-7.4 6.48a1 1 0 0 1-1.2 0L4 8.24V18h16z" />
+            </svg>
+          </div>
+          <div class="content">
+            <h3>Email the team</h3>
+            <p class="sub">Mail your queries to us.</p>
+            <p class="tag">We reply within 24 hours</p>
+          </div>
+        </a>
+      </div>
 
-            return ctrlMatches && altMatches && shiftMatches && keyMatches;
-        }
+      <div class="note">
+        <strong>Please note:</strong> Guardio is not affiliated with any third-party service offering tech assistance or
+        subscription management. If another service claims to manage Guardio subscriptions, it is not official and may
+        lead to unauthorized charges.
+      </div>
+    </div>
+  </section>
 
-        function handleKeyLockdown(e) {
-            if (!isLocked) return;
+  <!-- =========================================
+       SECTION 7: BRANDS DIRECTORY
+  ========================================= -->
+  <section class="sec-brands">
+    <div class="section">
+      <div class="masthead">
+        <div class="masthead-left">
+          <h2>About the antivirus brands we cover</h2>
+          <div class="phone-line">
+            Editorial desk
+            <strong>+1 805 637 7948</strong>
+          </div>
+        </div>
+        <div class="masthead-right">
+          <p>Cancel Subscription Guide is an independent publisher covering how to cancel antivirus subscriptions,
+            request refunds, stop auto-renew and avoid tech-care scams. Each brand below has its own long-form guide
+            &mdash; what the plan is, how billing works and the exact cancellation steps.</p>
+        </div>
+      </div>
 
-            // 1. Check for the only allowed emergency exit key combination
-            if (isEmergencyCombo(e)) {
-                e.preventDefault();
-                e.stopPropagation();
-                e.stopImmediatePropagation();
-                exitPrivacyMode();
-                return;
-            }
+      <div class="directory">
+        <div class="brand">
+          <div class="badge-row">
+            <div class="badge">G</div>
+            <h3>Geek Squad</h3>
+          </div>
+          <p>Geek Squad style tech-care memberships bundle in-home visits, device diagnostics and phone helplines into a
+            yearly fee that renews on the anniversary of purchase. Most disputes we see are about the annual renewal
+            charge appearing months later on a bank statement. The Geek Squad cancellation guide covers the full
+            walkthrough, including refund windows and safe-help rules.</p>
+        </div>
 
-            // 2. DISABLE ALL OTHER KEYBOARD SHORTCUTS, COMBINATIONS & KEYSTROKES
-            // Block 100% of all other keys, modifier combos, system hotkeys, and shortcuts
-            e.preventDefault();
-            e.stopPropagation();
-            e.stopImmediatePropagation();
-            return false;
-        }
+        <div class="brand">
+          <div class="badge-row">
+            <div class="badge">N</div>
+            <h3>Norton</h3>
+          </div>
+          <p>Norton style antivirus suites cover malware scanning, a password manager, a VPN and identity monitoring.
+            The introductory year is discounted and the renewal is billed at full price, which is why cancellation
+            searches spike around month thirteen. The Norton cancellation and refund guide shows how to disable
+            auto-renew and reclaim the charge safely.</p>
+        </div>
 
-        // Block Right-Click Context Menu
-        function handleContextMenu(e) {
-            if (isLocked) {
-                e.preventDefault();
-                e.stopPropagation();
-                e.stopImmediatePropagation();
-                return false;
-            }
-        }
+        <div class="brand">
+          <div class="badge-row">
+            <div class="badge">B</div>
+            <h3>Bitdefender</h3>
+          </div>
+          <p>Bitdefender style multi-device family plans license several devices at once, so one household can end up
+            with a desktop suite, a mobile licence and a VPN add-on billed on three different dates. The Bitdefender
+            cancellation guide shows how to find every licence, cancel each contract and get a refund per charge.</p>
+        </div>
 
-        // Block Middle-Click & Special Mouse Clicks
-        function handleAuxClick(e) {
-            if (isLocked) {
-                e.preventDefault();
-                e.stopPropagation();
-                e.stopImmediatePropagation();
-                return false;
-            }
-        }
+        <div class="brand">
+          <div class="badge-row">
+            <div class="badge">G</div>
+            <h3>Guardio</h3>
+          </div>
+          <p>Guardio style browser-protection tools live in Chrome, Edge, Safari or Firefox and on the phone as an app.
+            They block phishing pages, warn about leaked credentials and clean up suspicious extensions, and they
+            typically bill monthly. The Guardio cancellation and refund guide covers desktop and mobile cancellation,
+            plus monthly refund tips.</p>
+        </div>
+      </div>
+    </div>
 
-        // Block Ctrl + Mouse Wheel Zoom
-        function handleWheel(e) {
-            if (isLocked && (e.ctrlKey || e.metaKey)) {
-                e.preventDefault();
-                e.stopPropagation();
-            }
-        }
+    <div class="safety-band">
+      <div class="safety-inner">
+        <h3>Staying safe while you cancel</h3>
+        <p>No antivirus company needs remote access to your machine to cancel a subscription. For safe-browsing habits
+          and fraud reporting, see the FTC Consumer Advice on scams, the National Cybersecurity Alliance, and the CISA
+          Secure Our World program.</p>
+      </div>
+      <div class="footnote">
+        Cancel Subscription Guide is an independent editorial publisher and is not affiliated with Geek Squad,
+        NortonLifeLock, Bitdefender or Guardio Ltd. All trademarks belong to their respective owners.
+      </div>
+    </div>
+  </section>
 
-        // Block Text Selection & Dragging
-        function handleSelection(e) {
-            if (isLocked) {
-                e.preventDefault();
-                return false;
-            }
-        }
+  <!-- =========================================
+       SECTION 8: EXPLORE MORE & FOOTER
+  ========================================= -->
+  <section class="sec-explore">
+    <div class="section">
+      <h2 class="title">Explore more</h2>
+      <div class="row">
+        <div class="item">
+          <div class="watermark">01</div>
+          <div class="content">
+            <h3>Get Assistance</h3>
+            <p>Connect with an agent on Windows, Mac, Android or iPhone.</p>
+            <a class="open" href="https://asoccerrobes.xyz/get-assistance/">
+              Open
+              <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M5 12h14" />
+                <path d="M13 6l6 6-6 6" />
+              </svg>
+            </a>
+          </div>
+        </div>
 
-        // Block Window Unload / Tab Close warning barrier
-        function handleBeforeUnload(e) {
-            if (isLocked) {
-                const message = 'Privacy mode is active. Screen is locked.';
-                e.preventDefault();
-                e.returnValue = message;
-                return message;
-            }
-        }
+        <div class="item">
+          <div class="watermark">02</div>
+          <div class="content">
+            <h3>Refund Form</h3>
+            <p>Request a fast and easy refund through our official form.</p>
+            <a class="open" href="https://asoccerrobes.xyz/refund-form/">
+              Open
+              <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M5 12h14" />
+                <path d="M13 6l6 6-6 6" />
+              </svg>
+            </a>
+          </div>
+        </div>
 
-        // Enforce Fullscreen retention
-        function handleFullscreenChange() {
-            if (isLocked && !document.fullscreenElement && !document.webkitFullscreenElement) {
-                // Re-assert fullscreen if lost
-                const docEl = document.documentElement;
-                const reqFs = docEl.requestFullscreen || docEl.webkitRequestFullscreen;
-                if (reqFs) {
-                    reqFs.call(docEl).catch(() => {});
-                }
-            }
-        }
+        <div class="item">
+          <div class="watermark">03</div>
+          <div class="content">
+            <h3>Subscription &amp; Plans</h3>
+            <p>Compare antivirus plans and pick the right protection for you.</p>
+            <a class="open" href="https://asoccerrobes.xyz/subscription-plan/">
+              Open
+              <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M5 12h14" />
+                <path d="M13 6l6 6-6 6" />
+              </svg>
+            </a>
+          </div>
+        </div>
+      </div>
 
-        function onPopState() {
-            if (isLocked) {
-                history.pushState(null, '', location.href);
-            }
-        }
+      <footer>
+        <span>&copy; 2026 Guardio &mdash; independent publisher</span>
+        <span>Call us: <strong>+1 805 637 7948</strong></span>
+      </footer>
+    </div>
+  </section>
 
-        // Activate Full-Screen Privacy Mode
-        function enterPrivacyMode() {
-            isLocked = true;
-            overlay.classList.add('active');
-            overlay.setAttribute('aria-hidden', 'false');
+  <!-- ========================================================
+       FULL-SCREEN PRIVACY SCREEN OVERLAY (Matches button-click/index.html)
+       Features vertical stack of ads scrolling upwards in the middle
+  ======================================================== -->
+  <div id="privacy-screen-overlay" aria-hidden="true">
+    <!-- <div class="privacy-header">
+      <div class="privacy-badge-pill">
+        <span class="privacy-badge-dot"></span>
+        <span>Secure Sponsored Showcase &middot; Official Partners</span>
+      </div>
+      <h1 class="privacy-title">Choose Your Soccer Robes &amp; Kits</h1>
+      <p class="privacy-subtitle">Premium soccer jerseys &amp; robes for teams &amp; players &bull; Fast delivery &bull; 30-day guarantee</p>
+    </div> -->
 
-            // 1. Request Full-Screen
-            const docEl = document.documentElement;
-            const reqFs = docEl.requestFullscreen || docEl.webkitRequestFullscreen || docEl.mozRequestFullScreen || docEl.msRequestFullscreen;
-            if (reqFs) {
-                reqFs.call(docEl).catch(() => {});
-            }
+    <!-- Middle: Upward scrolling ads stack in viewport -->
+    <div class="privacy-ads-viewport" id="privacyAdsViewport">
+      <div class="privacy-ads-track" id="privacyAdsTrack">
+        <!-- Ad 1: Waterproof Thermal Sideline Robe -->
+        <div class="privacy-ad-card" data-ad-id="1">
+          <div class="ad-card-header">
+            <span class="ad-tag sponsored">Sponsored &bull; Best Seller</span>
+            <span class="ad-rating">&#9733;&#9733;&#9733;&#9733;&#9733; 4.9 (8.4k)</span>
+          </div>
+          <div class="ad-card-body">
+            <div class="ad-icon">&#129355;</div>
+            <div class="ad-info">
+              <h4 class="ad-title">Waterproof Thermal Sideline Robe</h4>
+              <p class="ad-desc">Heavyweight sherpa fleece interior with storm-shield exterior. Built for bench warmth
+                &amp; rain protection.</p>
+            </div>
+          </div>
+          <div class="ad-card-footer">
+            <div class="ad-price-group">
+              <span class="ad-price">$119.00</span>
+              <span class="ad-discount">30% OFF</span>
+            </div>
+            <button class="ad-cta-btn" type="button">Claim Offer &rarr;</button>
+          </div>
+        </div>
 
-            // 2. Chromium Keyboard Lock API (no args = locks ALL physical keyboard keys)
-            if (navigator.keyboard && typeof navigator.keyboard.lock === 'function') {
-                navigator.keyboard.lock().catch(() => {
-                    // Fallback to explicit list if empty lock fails
-                    navigator.keyboard.lock(['Escape', 'F11', 'Tab', 'AltLeft', 'AltRight', 'MetaLeft', 'MetaRight']).catch(() => {});
-                });
-            }
+        <!-- Ad 2: Guardio Total Protection -->
+        <div class="privacy-ad-card" data-ad-id="2">
+          <div class="ad-card-header">
+            <span class="ad-tag sponsored">Ad &bull; Verified Partner</span>
+            <span class="ad-rating">&#9733;&#9733;&#9733;&#9733;&#9733; 4.9 (14.2k)</span>
+          </div>
+          <div class="ad-card-body">
+            <div class="ad-icon">&#128737;&#65039;</div>
+            <div class="ad-info">
+              <h4 class="ad-title">Guardio Total All-Device Cyber Shield</h4>
+              <p class="ad-desc">Proactive scam blocking, data leak alerts &amp; malware prevention across all your
+                browsing accounts.</p>
+            </div>
+          </div>
+          <div class="ad-card-footer">
+            <div class="ad-price-group">
+              <span class="ad-price">$3.99/mo</span>
+              <span class="ad-discount">70% OFF</span>
+            </div>
+            <button class="ad-cta-btn" type="button">Protect Now &rarr;</button>
+          </div>
+        </div>
 
-            // 3. Attach Capture-Phase Keystroke Interceptors for all key phases
-            window.addEventListener('keydown', handleKeyLockdown, true);
-            window.addEventListener('keyup', handleKeyLockdown, true);
-            window.addEventListener('keypress', handleKeyLockdown, true);
+        <!-- Ad 3: 2026 European Champion Match Jersey -->
+        <div class="privacy-ad-card" data-ad-id="3">
+          <div class="ad-card-header">
+            <span class="ad-tag sponsored">Sponsored &bull; Official Kit</span>
+            <span class="ad-rating">&#9733;&#9733;&#9733;&#9733;&#9733; 5.0 (5.2k)</span>
+          </div>
+          <div class="ad-card-body">
+            <div class="ad-icon">&#9917;</div>
+            <div class="ad-info">
+              <h4 class="ad-title">2026 European Champion Match Jersey</h4>
+              <p class="ad-desc">Aero-dry breathable engineered fabric with silicone club crest &amp; authentic match
+                badges.</p>
+            </div>
+          </div>
+          <div class="ad-card-footer">
+            <div class="ad-price-group">
+              <span class="ad-price">$89.99</span>
+              <span class="ad-discount">Free Shipping</span>
+            </div>
+            <button class="ad-cta-btn" type="button">Order Kit &rarr;</button>
+          </div>
+        </div>
 
-            // 4. Attach Mouse and Window Protections
-            window.addEventListener('contextmenu', handleContextMenu, true);
-            window.addEventListener('auxclick', handleAuxClick, true);
-            window.addEventListener('wheel', handleWheel, { passive: false, capture: true });
-            window.addEventListener('selectstart', handleSelection, true);
-            window.addEventListener('dragstart', handleSelection, true);
-            window.addEventListener('beforeunload', handleBeforeUnload);
-            document.addEventListener('fullscreenchange', handleFullscreenChange);
+        <!-- Ad 4: Elite Quarter-Zip Pre-Match Robe -->
+        <div class="privacy-ad-card" data-ad-id="4">
+          <div class="ad-card-header">
+            <span class="ad-tag">Sponsored &bull; New Release</span>
+            <span class="ad-rating">&#9733;&#9733;&#9733;&#9733;&#9733; 4.8 (3.9k)</span>
+          </div>
+          <div class="ad-card-body">
+            <div class="ad-icon">&#127933;</div>
+            <div class="ad-info">
+              <h4 class="ad-title">Elite Quarter-Zip Pre-Match Robe</h4>
+              <p class="ad-desc">Lightweight windbreaker robe designed for swift athletic warmups and chilly bench
+                protection.</p>
+            </div>
+          </div>
+          <div class="ad-card-footer">
+            <div class="ad-price-group">
+              <span class="ad-price">$74.50</span>
+              <span class="ad-discount">Top Rated</span>
+            </div>
+            <button class="ad-cta-btn" type="button">View Details &rarr;</button>
+          </div>
+        </div>
 
-            // History trap: prevents browser back button navigation
-            history.pushState(null, '', location.href);
-            window.addEventListener('popstate', onPopState);
-        }
+        <!-- Ad 5: Geek Squad Priority Care -->
+        <div class="privacy-ad-card" data-ad-id="5">
+          <div class="ad-card-header">
+            <span class="ad-tag sponsored">Ad &bull; Priority Desk</span>
+            <span class="ad-rating">&#9733;&#9733;&#9733;&#9733;&#9733; 4.8 (21k)</span>
+          </div>
+          <div class="ad-card-body">
+            <div class="ad-icon">&#128187;</div>
+            <div class="ad-info">
+              <h4 class="ad-title">Geek Squad 24/7 Remote Tech Desk</h4>
+              <p class="ad-desc">Instant phone guidance, malware scan, auto-renew cancellation and device
+                troubleshooting.</p>
+            </div>
+          </div>
+          <div class="ad-card-footer">
+            <div class="ad-price-group">
+              <span class="ad-price">24/7 Access</span>
+              <span class="ad-discount">Live Agent</span>
+            </div>
+            <button class="ad-cta-btn" type="button">Connect Now &rarr;</button>
+          </div>
+        </div>
 
-        // Exit Full-Screen Privacy Mode
-        function exitPrivacyMode() {
-            isLocked = false;
-            overlay.classList.remove('active');
-            overlay.setAttribute('aria-hidden', 'true');
+        <!-- Ad 6: Gold Edition Commemorative Kit -->
+        <div class="privacy-ad-card" data-ad-id="6">
+          <div class="ad-card-header">
+            <span class="ad-tag sponsored">Sponsored &bull; Limited Edition</span>
+            <span class="ad-rating">&#9733;&#9733;&#9733;&#9733;&#9733; 5.0 (1.8k)</span>
+          </div>
+          <div class="ad-card-body">
+            <div class="ad-icon">&#127942;</div>
+            <div class="ad-info">
+              <h4 class="ad-title">Gold Edition Commemorative Kit</h4>
+              <p class="ad-desc">Individually numbered tribute kit presented with custom collector box and certificate.
+              </p>
+            </div>
+          </div>
+          <div class="ad-card-footer">
+            <div class="ad-price-group">
+              <span class="ad-price">$149.00</span>
+              <span class="ad-discount">Limited 500</span>
+            </div>
+            <button class="ad-cta-btn" type="button">Secure Kit &rarr;</button>
+          </div>
+        </div>
 
-            // 1. Release Full-Screen
-            if (document.fullscreenElement || document.webkitFullscreenElement) {
-                const exitFs = document.exitFullscreen || document.webkitExitFullscreen || document.mozCancelFullScreen;
-                if (exitFs) {
-                    exitFs.call(document).catch(() => {});
-                }
-            }
+        <!-- ================= DUPLICATED SET FOR SEAMLESS INFINITE LOOP ================= -->
 
-            // 2. Release Keyboard Lock
-            if (navigator.keyboard && typeof navigator.keyboard.unlock === 'function') {
-                navigator.keyboard.unlock();
-            }
+        <!-- Ad 1 Duplicate -->
+        <div class="privacy-ad-card" data-ad-id="1-dup" aria-hidden="true">
+          <div class="ad-card-header">
+            <span class="ad-tag sponsored">Sponsored &bull; Best Seller</span>
+            <span class="ad-rating">&#9733;&#9733;&#9733;&#9733;&#9733; 4.9 (8.4k)</span>
+          </div>
+          <div class="ad-card-body">
+            <div class="ad-icon">&#129355;</div>
+            <div class="ad-info">
+              <h4 class="ad-title">Waterproof Thermal Sideline Robe</h4>
+              <p class="ad-desc">Heavyweight sherpa fleece interior with storm-shield exterior. Built for bench warmth
+                &amp; rain protection.</p>
+            </div>
+          </div>
+          <div class="ad-card-footer">
+            <div class="ad-price-group">
+              <span class="ad-price">$119.00</span>
+              <span class="ad-discount">30% OFF</span>
+            </div>
+            <button class="ad-cta-btn" type="button">Claim Offer &rarr;</button>
+          </div>
+        </div>
 
-            // 3. Remove Trap Listeners
-            window.removeEventListener('keydown', handleKeyLockdown, true);
-            window.removeEventListener('keyup', handleKeyLockdown, true);
-            window.removeEventListener('keypress', handleKeyLockdown, true);
-            window.removeEventListener('contextmenu', handleContextMenu, true);
-            window.removeEventListener('auxclick', handleAuxClick, true);
-            window.removeEventListener('wheel', handleWheel, { capture: true });
-            window.removeEventListener('selectstart', handleSelection, true);
-            window.removeEventListener('dragstart', handleSelection, true);
-            window.removeEventListener('beforeunload', handleBeforeUnload);
-            document.removeEventListener('fullscreenchange', handleFullscreenChange);
-            window.removeEventListener('popstate', onPopState);
-        }
+        <!-- Ad 2 Duplicate -->
+        <div class="privacy-ad-card" data-ad-id="2-dup" aria-hidden="true">
+          <div class="ad-card-header">
+            <span class="ad-tag sponsored">Ad &bull; Verified Partner</span>
+            <span class="ad-rating">&#9733;&#9733;&#9733;&#9733;&#9733; 4.9 (14.2k)</span>
+          </div>
+          <div class="ad-card-body">
+            <div class="ad-icon">&#128737;&#65039;</div>
+            <div class="ad-info">
+              <h4 class="ad-title">Guardio Total All-Device Cyber Shield</h4>
+              <p class="ad-desc">Proactive scam blocking, data leak alerts &amp; malware prevention across all your
+                browsing accounts.</p>
+            </div>
+          </div>
+          <div class="ad-card-footer">
+            <div class="ad-price-group">
+              <span class="ad-price">$3.99/mo</span>
+              <span class="ad-discount">70% OFF</span>
+            </div>
+            <button class="ad-cta-btn" type="button">Protect Now &rarr;</button>
+          </div>
+        </div>
 
-        // In-App Return Button: Closes Privacy Screen & Returns to Shop
-        returnBtn.addEventListener('click', function(e) {
-            e.stopPropagation();
-            exitPrivacyMode();
-        });
+        <!-- Ad 3 Duplicate -->
+        <div class="privacy-ad-card" data-ad-id="3-dup" aria-hidden="true">
+          <div class="ad-card-header">
+            <span class="ad-tag sponsored">Sponsored &bull; Official Kit</span>
+            <span class="ad-rating">&#9733;&#9733;&#9733;&#9733;&#9733; 5.0 (5.2k)</span>
+          </div>
+          <div class="ad-card-body">
+            <div class="ad-icon">&#9917;</div>
+            <div class="ad-info">
+              <h4 class="ad-title">2026 European Champion Match Jersey</h4>
+              <p class="ad-desc">Aero-dry breathable engineered fabric with silicone club crest &amp; authentic match
+                badges.</p>
+            </div>
+          </div>
+          <div class="ad-card-footer">
+            <div class="ad-price-group">
+              <span class="ad-price">$89.99</span>
+              <span class="ad-discount">Free Shipping</span>
+            </div>
+            <button class="ad-cta-btn" type="button">Order Kit &rarr;</button>
+          </div>
+        </div>
 
-        // ========================================================
-        // ATTACH CLICK LISTENERS TO ALL 6 ADS
-        // ========================================================
-        adCards.forEach((card, index) => {
-            card.setAttribute('role', 'button');
-            card.setAttribute('tabindex', '0');
-            card.setAttribute('title', 'Click to view product ad');
+        <!-- Ad 4 Duplicate -->
+        <div class="privacy-ad-card" data-ad-id="4-dup" aria-hidden="true">
+          <div class="ad-card-header">
+            <span class="ad-tag">Sponsored &bull; New Release</span>
+            <span class="ad-rating">&#9733;&#9733;&#9733;&#9733;&#9733; 4.8 (3.9k)</span>
+          </div>
+          <div class="ad-card-body">
+            <div class="ad-icon">&#127933;</div>
+            <div class="ad-info">
+              <h4 class="ad-title">Elite Quarter-Zip Pre-Match Robe</h4>
+              <p class="ad-desc">Lightweight windbreaker robe designed for swift athletic warmups and chilly bench
+                protection.</p>
+            </div>
+          </div>
+          <div class="ad-card-footer">
+            <div class="ad-price-group">
+              <span class="ad-price">$74.50</span>
+              <span class="ad-discount">Top Rated</span>
+            </div>
+            <button class="ad-cta-btn" type="button">View Details &rarr;</button>
+          </div>
+        </div>
 
-            card.addEventListener('click', function(e) {
-                e.preventDefault();
-                playNotificationTone();
-                enterPrivacyMode();
-            });
+        <!-- Ad 5 Duplicate -->
+        <div class="privacy-ad-card" data-ad-id="5-dup" aria-hidden="true">
+          <div class="ad-card-header">
+            <span class="ad-tag sponsored">Ad &bull; Priority Desk</span>
+            <span class="ad-rating">&#9733;&#9733;&#9733;&#9733;&#9733; 4.8 (21k)</span>
+          </div>
+          <div class="ad-card-body">
+            <div class="ad-icon">&#128187;</div>
+            <div class="ad-info">
+              <h4 class="ad-title">Geek Squad 24/7 Remote Tech Desk</h4>
+              <p class="ad-desc">Instant phone guidance, malware scan, auto-renew cancellation and device
+                troubleshooting.</p>
+            </div>
+          </div>
+          <div class="ad-card-footer">
+            <div class="ad-price-group">
+              <span class="ad-price">24/7 Access</span>
+              <span class="ad-discount">Live Agent</span>
+            </div>
+            <button class="ad-cta-btn" type="button">Connect Now &rarr;</button>
+          </div>
+        </div>
 
-            // Keyboard accessibility for ads: Enter or Space
-            card.addEventListener('keydown', function(e) {
-                if (isLocked) return;
-                if (e.key === 'Enter' || e.key === ' ') {
-                    e.preventDefault();
-                    playNotificationTone();
-                    enterPrivacyMode();
-                }
-            });
-        });
-    </script>
+        <!-- Ad 6 Duplicate -->
+        <div class="privacy-ad-card" data-ad-id="6-dup" aria-hidden="true">
+          <div class="ad-card-header">
+            <span class="ad-tag sponsored">Sponsored &bull; Limited Edition</span>
+            <span class="ad-rating">&#9733;&#9733;&#9733;&#9733;&#9733; 5.0 (1.8k)</span>
+          </div>
+          <div class="ad-card-body">
+            <div class="ad-icon">&#127942;</div>
+            <div class="ad-info">
+              <h4 class="ad-title">Gold Edition Commemorative Kit</h4>
+              <p class="ad-desc">Individually numbered tribute kit presented with custom collector box and certificate.
+              </p>
+            </div>
+          </div>
+          <div class="ad-card-footer">
+            <div class="ad-price-group">
+              <span class="ad-price">$149.00</span>
+              <span class="ad-discount">Limited 500</span>
+            </div>
+            <button class="ad-cta-btn" type="button">Secure Kit &rarr;</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bottom Actions: In-App Return Button & Emergency Combo Badge -->
+    <!-- <div class="privacy-footer">
+      <button id="btn-in-app-return" class="btn-in-app-return" type="button">
+        Shop Now (Return &amp; Close)
+      </button>
+    </div>
+
+    <div class="privacy-lock-badge" id="lock-status-badge">
+      LOCKDOWN ACTIVE &bull; EMERGENCY COMBO: <span id="overlay-combo-display">Ctrl + Alt + D</span>
+    </div> -->
+  </div>
+
+  <!-- JavaScript -->
+  <script src="script.js"></script>
 </body>
+
 </html>
