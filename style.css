@@ -2099,20 +2099,6 @@ body.privacy-mode-active::-webkit-scrollbar {
   height: 0 !important;
 }
 
-/* Strictly hide all normal landing page contents while privacy mode is active so usual page never shows */
-html.privacy-mode-active,
-body.privacy-mode-active {
-  overflow: hidden !important;
-  height: 100% !important;
-  height: 100dvh !important;
-  max-height: 100dvh !important;
-}
-
-body.privacy-mode-active > *:not(#privacy-screen-overlay) {
-  display: none !important;
-  visibility: hidden !important;
-}
-
 #privacy-screen-overlay {
   display: none;
   position: fixed;
