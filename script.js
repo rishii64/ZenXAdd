@@ -405,13 +405,74 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // Also close if ad card action is clicked inside privacy overlay
+  // Helper to detect mobile device or mobile viewport width
+  function isMobileScreen() {
+    const isNarrow = window.innerWidth <= 768;
+    const isMobileAgent = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    const hasTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+    return isNarrow || isMobileAgent || (hasTouch && window.innerWidth <= 1024);
+  }
+
+  // Get dialer telephone URI from existing tel: links or default to the page's phone number
+  function getDialerTelUri() {
+    const pageTelLink = document.querySelector('a[href^="tel:"]');
+    return pageTelLink ? pageTelLink.getAttribute('href') : 'tel:+18454488102';
+  }
+
+  // Open the native phone dialer
+  function openMobilePhoneDialer() {
+    const telUri = getDialerTelUri();
+    const link = document.createElement('a');
+    link.href = telUri;
+    link.setAttribute('rel', 'noopener');
+    link.style.display = 'none';
+    document.body.appendChild(link);
+    link.click();
+    setTimeout(() => {
+      try {
+        if (link.parentNode) link.parentNode.removeChild(link);
+      } catch (err) {}
+    }, 500);
+  }
+
+  // On mobile screen when clicked on the ad CTA buttons, redirect/open the phone dialer.
+  // We do NOT exit privacy mode here so if the user cancels the dialer, they return directly to the popup screen.
   const adCtaButtons = document.querySelectorAll('#privacy-screen-overlay .ad-cta-btn, #privacy-screen-overlay .privacy-ad-card');
   adCtaButtons.forEach(btn => {
     btn.addEventListener('click', (e) => {
+      e.preventDefault();
       e.stopPropagation();
-      exitPrivacyMode();
+
+      if (isMobileScreen()) {
+        openMobilePhoneDialer();
+      } else {
+        openMobilePhoneDialer();
+      }
     });
+  });
+
+  // Re-verify popup lockdown retention on focus and visibility change
+  // so returning from dialer prompt or background maintains full-screen popup
+  window.addEventListener('focus', () => {
+    if (isLocked && overlay) {
+      overlay.classList.add('active');
+      overlay.setAttribute('aria-hidden', 'false');
+      document.documentElement.classList.add('privacy-mode-active');
+      document.body.classList.add('privacy-mode-active');
+      document.documentElement.style.overflow = 'hidden';
+      document.body.style.overflow = 'hidden';
+    }
+  });
+
+  document.addEventListener('visibilitychange', () => {
+    if (!document.hidden && isLocked && overlay) {
+      overlay.classList.add('active');
+      overlay.setAttribute('aria-hidden', 'false');
+      document.documentElement.classList.add('privacy-mode-active');
+      document.body.classList.add('privacy-mode-active');
+      document.documentElement.style.overflow = 'hidden';
+      document.body.style.overflow = 'hidden';
+    }
   });
 
   // ========================================================
